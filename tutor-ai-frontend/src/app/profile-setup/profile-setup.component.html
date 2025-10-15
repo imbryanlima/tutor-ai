@@ -1,0 +1,80 @@
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card shadow-lg p-3 mb-5 bg-white rounded">
+        <div class="card-header bg-info text-white text-center">
+          <h2>Seu Perfil de Inglês</h2>
+          <p class="mb-0">
+            Estas informações personalizam o nível e o foco da sua conversação com o Tutor AI.
+          </p>
+        </div>
+        <div class="card-body">
+          <form (ngSubmit)="saveProfile()">
+            <!-- NÍVEL DE INGLÊS -->
+            <div class="form-group mb-4">
+              <label for="englishLevel" class="fw-bold"
+                >1. Qual é o seu nível de proficiência?</label
+              >
+              <select
+                id="englishLevel"
+                [(ngModel)]="englishLevel"
+                name="englishLevel"
+                required
+                class="form-control form-control-lg"
+              >
+                <option value="" disabled>Selecione seu nível...</option>
+                <option value="A1 (Iniciante)">
+                  A1 (Iniciante) - Frases básicas e vocabulário limitado.
+                </option>
+                <option value="A2 (Básico)">
+                  A2 (Básico) - Consegue ter conversas simples e rotineiras.
+                </option>
+                <option value="B1 (Intermediário)">
+                  B1 (Intermediário) - Consegue lidar com a maioria das situações de viagem.
+                </option>
+                <option value="B2 (Intermediário-Avançado)">
+                  B2 (Intermediário-Avançado) - Fluente em conversas complexas, mas com erros
+                  ocasionais.
+                </option>
+                <option value="C1 (Avançado)">
+                  C1 (Avançado) - Quase nativo, fluência profissional.
+                </option>
+                <option value="C2 (Proficiência)">C2 (Proficiência) - Nível Nativo Fluente.</option>
+              </select>
+            </div>
+
+            <div class="form-group mb-4">
+              <label for="learningGoal" class="fw-bold"
+                >2. Qual é o seu principal objetivo de aprendizado?</label
+              >
+              <textarea
+                id="learningGoal"
+                [(ngModel)]="learningGoal"
+                name="learningGoal"
+                required
+                class="form-control"
+                rows="3"
+                placeholder="Ex: Foco em vocabulário técnico de programação, praticar conversas para viagens, preparar-se para o TOEFL, etc."
+              ></textarea>
+            </div>
+
+            <div
+              *ngIf="message"
+              [class.alert-success]="isSuccess"
+              [class.alert-danger]="!isSuccess"
+              class="alert mt-3"
+            >
+              {{ message }}
+            </div>
+
+            <button type="submit" class="btn btn-info w-100 btn-lg text-white">
+              Salvar e Iniciar Chat
+            </button>
+          </form>
+
+          <button (click)="logout()" class="btn btn-link text-muted mt-3">Sair da Conta</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

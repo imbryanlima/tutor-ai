@@ -1,0 +1,88 @@
+/* You can add global styles to this file, and also import other style files */
+/*
+ * Arquivo de Estilos Globais
+ * Define o visual básico da aplicação (Layout, Fonte, Cores)
+ */
+
+/* 1. Reset Básico e Fonte */
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: #f4f7f6; /* Fundo cinza claro */
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 2. Container Principal (Centraliza o conteúdo) */
+.container {
+  padding-top: 50px;
+  padding-bottom: 50px;
+}
+
+/* 3. Estilo de Cartão e Sombra */
+.card {
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* 4. Títulos e Botões */
+h2 {
+  font-weight: 700;
+}
+
+.card-header {
+  border-radius: 12px 12px 0 0 !important;
+  font-size: 1.5rem;
+  padding: 20px;
+}
+
+/* 5. Estilo de Inputs e Botões (para simular Bootstrap) */
+.form-control {
+  border-radius: 8px;
+  border: 1px solid #ced4da;
+  padding: 10px 15px;
+  transition: border-color 0.3s;
+}
+
+.form-control:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.btn {
+  border-radius: 8px;
+  font-weight: 600;
+  transition: background-color 0.3s;
+}
+
+/* Cores dos botões */
+.btn-primary {
+  background-color: #007bff;
+  border-color: #007bff;
+}
+.btn-success {
+  background-color: #28a745;
+  border-color: #28a745;
+}
+.btn-info {
+  background-color: #17a2b8;
+  border-color: #17a2b8;
+}
+
+.btn-primary:hover,
+.btn-success:hover,
+.btn-info:hover {
+  filter: brightness(90%);
+}
+
+/* Estilo para mensagens de erro */
+.alert-danger {
+  background-color: #f8d7da;
+  color: #721c24;
+  border-color: #f5c6cb;
+  border-radius: 8px;
+  margin-top: 15px;
+}

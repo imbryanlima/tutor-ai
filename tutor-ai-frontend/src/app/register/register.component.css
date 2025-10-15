@@ -1,0 +1,425 @@
+/* =====================================
+   Container principal
+===================================== */
+.auth-container {
+  font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 20px;
+  position: relative;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+/* Efeitos de fundo animados */
+.auth-container::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 50%, rgba(99, 102, 241, 0.05), transparent 60%);
+  animation: glowMove 12s ease-in-out infinite alternate;
+  z-index: 0;
+}
+
+@keyframes glowMove {
+  from {
+    transform: scale(1);
+    opacity: 0.4;
+  }
+  to {
+    transform: scale(1.08);
+    opacity: 0.7;
+  }
+}
+
+/* =====================================
+   Card de registro (efeito vidro)
+===================================== */
+.card {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 22px;
+  backdrop-filter: blur(22px);
+  background: rgba(255, 255, 255, 0.04);
+  box-shadow: 0 4px 40px rgba(0, 0, 0, 0.4);
+  width: 100%;
+  max-width: 420px;
+  overflow: hidden;
+  transition: all 0.4s ease;
+  animation: fadeUp 0.9s ease;
+  position: relative;
+  z-index: 1;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 6px 50px rgba(99, 102, 241, 0.25);
+}
+
+/* Luz interna */
+.card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%);
+  pointer-events: none;
+  border-radius: 22px;
+}
+
+/* =====================================
+   Cabeçalho - SOLUÇÃO NUCLEAR
+===================================== */
+.auth-header {
+  background: linear-gradient(135deg, #6366f1, #8b5cf6) !important;
+  padding: 2.5rem 1.5rem !important;
+  border-radius: 22px 22px 0 0 !important;
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+  margin: -1px -1px 0 -1px !important;
+  width: calc(100% + 2px) !important;
+  border: none !important;
+  box-sizing: border-box !important;
+}
+
+.auth-header::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 60% 40%, rgba(255, 255, 255, 0.12), transparent 70%);
+}
+
+.auth-header h2 {
+  font-weight: 700;
+  font-size: 2rem;
+  margin: 0;
+  color: #fff;
+  letter-spacing: -0.5px;
+  text-shadow: 0 0 20px rgba(255, 255, 255, 0.35);
+  position: relative;
+  z-index: 1;
+}
+
+/* =====================================
+   Corpo do card
+===================================== */
+.card-body {
+  padding: 2.5rem 2rem !important;
+  background: transparent;
+  margin: 0;
+}
+
+/* =====================================
+   Formulário e inputs
+===================================== */
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  font-weight: 600;
+  color: #e2e8f0;
+  margin-bottom: 0.75rem;
+  font-size: 0.95rem;
+  display: block;
+  letter-spacing: 0.2px;
+}
+
+.form-control {
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  padding: 1rem 1.25rem !important; /* Tamanho padronizado */
+  font-size: 1rem;
+  background: rgba(255, 255, 255, 0.06);
+  color: #f8fafc;
+  transition: all 0.25s ease;
+  box-shadow: inset 0 0 8px rgba(255, 255, 255, 0.02);
+  text-indent: 0;
+  text-align: left;
+  width: 100%;
+  box-sizing: border-box;
+  height: 52px; /* Altura consistente */
+}
+
+.form-control:focus {
+  border-color: #818cf8;
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 0 25px rgba(99, 102, 241, 0.3);
+  transform: translateY(-2px);
+  outline: none;
+}
+
+.form-control::placeholder {
+  color: #94a3b8;
+  font-size: 0.9rem;
+  text-indent: 0;
+}
+
+/* =====================================
+   Botão Cadastrar - MESMO TAMANHO E ESTILO
+===================================== */
+.btn-success {
+  background: linear-gradient(90deg, #6366f1, #8b5cf6) !important;
+  border: none !important;
+  border-radius: 12px !important;
+  padding: 1rem 1.5rem !important; /* Mesmo padding do login */
+  font-weight: 600 !important;
+  font-size: 1.1rem !important;
+  letter-spacing: 0.3px;
+  transition: all 0.3s ease !important;
+  box-shadow: 0 0 25px rgba(99, 102, 241, 0.25) !important;
+  color: white !important;
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  margin-top: 0.5rem;
+  height: 56px; /* Altura consistente com login */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-success::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.25), transparent);
+  transform: translateX(-100%);
+  transition: transform 0.6s ease;
+}
+
+.btn-success:hover::before {
+  transform: translateX(100%);
+}
+
+.btn-success:hover:not(:disabled) {
+  transform: translateY(-3px) !important;
+  box-shadow: 0 0 35px rgba(99, 102, 241, 0.4) !important;
+}
+
+/* ESTADO DESABILITADO COM OPACIDADE AO INVÉS DE CINZA */
+.btn-success:disabled {
+  opacity: 0.4 !important; /* Opacidade reduzida */
+  cursor: not-allowed;
+  transform: none !important;
+  background: linear-gradient(90deg, #6366f1, #8b5cf6) !important; /* Mantém a mesma cor */
+  box-shadow: 0 0 15px rgba(99, 102, 241, 0.15) !important; /* Sombra mais suave */
+}
+
+/* =====================================
+   Mensagens de erro
+===================================== */
+.alert-danger {
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  border-radius: 12px;
+  color: #fecaca;
+  font-weight: 500;
+  padding: 1rem 1.25rem;
+  text-align: center;
+  animation: shake 0.4s ease-in-out;
+  margin-top: 1rem;
+  font-size: 0.9rem;
+}
+
+@keyframes shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-3px);
+  }
+  75% {
+    transform: translateX(3px);
+  }
+}
+
+/* =====================================
+   Links e texto inferior
+===================================== */
+.text-center {
+  margin-top: 1.5rem;
+  color: whitesmoke;
+}
+
+.text-center p {
+  color: #94a3b8;
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+.text-center a {
+  color: #818cf8;
+  text-decoration: none;
+  font-weight: 600;
+  position: relative;
+  transition: all 0.3s ease;
+  font-size: 0.95rem;
+}
+
+.text-center a::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: #818cf8;
+  transition: width 0.3s ease;
+}
+
+.text-center a:hover {
+  color: #a78bfa;
+}
+
+.text-center a:hover::after {
+  width: 100%;
+}
+
+/* =====================================
+   Estados de validação com opacidade
+===================================== */
+.ng-invalid.ng-touched {
+  border-color: rgba(239, 68, 68, 0.6) !important;
+  background: rgba(239, 68, 68, 0.05) !important;
+}
+
+.ng-valid.ng-touched {
+  border-color: rgba(34, 197, 94, 0.6) !important;
+  background: rgba(34, 197, 94, 0.05) !important;
+}
+
+/* =====================================
+   Animações de entrada
+===================================== */
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* =====================================
+   Responsividade
+===================================== */
+@media (max-width: 768px) {
+  .auth-container {
+    padding: 0 16px;
+    height: auto;
+    min-height: 100vh;
+    align-items: center;
+  }
+
+  .card {
+    max-width: 400px;
+    border-radius: 18px;
+    margin: 20px 0;
+  }
+
+  .auth-header {
+    padding: 2rem 1.25rem !important;
+    border-radius: 18px 18px 0 0 !important;
+    margin: -1px -1px 0 -1px !important;
+    width: calc(100% + 2px) !important;
+  }
+
+  .auth-header h2 {
+    font-size: 1.7rem;
+  }
+
+  .card-body {
+    padding: 2rem 1.5rem !important;
+  }
+
+  .form-control {
+    padding: 0.9rem 1rem !important;
+    height: 50px;
+    font-size: 0.95rem;
+  }
+
+  .btn-success {
+    padding: 0.9rem 1.25rem !important;
+    height: 52px;
+    font-size: 1rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .auth-container {
+    padding: 0 12px;
+  }
+
+  .card {
+    max-width: 340px;
+    border-radius: 16px;
+  }
+
+  .auth-header {
+    padding: 1.75rem 1rem !important;
+    border-radius: 16px 16px 0 0 !important;
+    margin: -1px -1px 0 -1px !important;
+    width: calc(100% + 2px) !important;
+  }
+
+  .auth-header h2 {
+    font-size: 1.5rem;
+  }
+
+  .card-body {
+    padding: 1.75rem 1.25rem !important;
+  }
+
+  .form-control {
+    padding: 0.85rem 0.9rem !important;
+    height: 48px;
+  }
+
+  .btn-success {
+    padding: 0.85rem 1rem !important;
+    height: 50px;
+    font-size: 0.95rem !important;
+  }
+}
+
+/* =====================================
+   Remove estilos padrão do Bootstrap
+===================================== */
+.shadow-lg {
+  box-shadow: none !important;
+}
+
+.bg-white {
+  background: transparent !important;
+}
+
+.rounded {
+  border-radius: 22px !important;
+}
+
+.mt-5 {
+  margin-top: 0 !important;
+}
+
+.row {
+  margin: 0 !important;
+}
+
+.col-md-6 {
+  padding: 0 !important;
+}
+
+.mb-3 {
+  margin-bottom: 1.5rem !important;
+}
+
+.mt-3 {
+  margin-top: 1rem !important;
+}
