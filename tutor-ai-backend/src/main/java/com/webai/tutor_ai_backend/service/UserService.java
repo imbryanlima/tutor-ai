@@ -1,4 +1,4 @@
-package com.webai.tutor_ai_backend.service; // PACOTE SERVICE
+package com.webai.tutor_ai_backend.service;
 
 import com.webai.tutor_ai_backend.repository.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;

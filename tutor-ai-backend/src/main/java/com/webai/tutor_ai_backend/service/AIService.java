@@ -14,7 +14,6 @@ import java.util.Map;
 @Service
 public class AIService {
 
-    // Adicionando um logger para registrar informações e erros internos
     private static final Logger logger = LoggerFactory.getLogger(AIService.class);
 
     @Value("${gemini.api.key}")
@@ -48,11 +47,12 @@ public class AIService {
     }
 
     private String callGenerativeApi(String prompt) throws IOException {
-        String apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/" + modelName + ":generateContent?key=" + apiKey;
+        String apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/" + modelName + ":generateContent?key="
+                + apiKey;
 
         Map<String, Object> textPart = Map.of("text", prompt);
-        Map<String, Object> content = Map.of("parts", new Object[]{textPart});
-        Map<String, Object> requestBody = Map.of("contents", new Object[]{content});
+        Map<String, Object> content = Map.of("parts", new Object[] { textPart });
+        Map<String, Object> requestBody = Map.of("contents", new Object[] { content });
 
         String jsonResponse = webClient.post()
                 .uri(apiUrl)
