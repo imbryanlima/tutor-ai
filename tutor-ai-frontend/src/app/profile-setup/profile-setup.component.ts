@@ -8,13 +8,11 @@ import { takeUntil } from 'rxjs/operators';
 
 import { AuthService } from '../auth.service';
 
-// Interface para os dados do perfil
 interface ProfileData {
   englishLevel: string;
   learningGoal: string;
 }
 
-// Interface para a resposta da API
 interface ApiResponse {
   message: string;
   profile?: any;
@@ -42,7 +40,6 @@ export class ProfileSetupComponent implements OnInit, OnDestroy {
   constructor(private http: HttpClient, private router: Router, public authService: AuthService) {}
 
   ngOnInit(): void {
-    // Verifica autenticação ao inicializar
     if (!this.authService.isLoggedIn()) {
       this.router.navigate(['/login']);
       return;
@@ -56,10 +53,6 @@ export class ProfileSetupComponent implements OnInit, OnDestroy {
     this.destroy$.next();
     this.destroy$.complete();
   }
-
-  /**
-   * Carrega o perfil existente do usuário
-   */
   private loadExistingProfile(): void {
     this.isLoading = true;
 
@@ -77,14 +70,10 @@ export class ProfileSetupComponent implements OnInit, OnDestroy {
         error: (error: HttpErrorResponse) => {
           console.warn('Não foi possível carregar perfil existente:', error.message);
           this.isLoading = false;
-          // Não mostra erro para o usuário, pois pode ser o primeiro acesso
         },
       });
   }
 
-  /**
-   * Valida se o formulário está preenchido corretamente
-   */
   private validateForm(): boolean {
     if (!this.englishLevel.trim()) {
       this.showMessage('Por favor, selecione seu nível de inglês.', false);
@@ -112,14 +101,9 @@ export class ProfileSetupComponent implements OnInit, OnDestroy {
     return true;
   }
 
-  /**
-   * Salva o perfil do usuário
-   */
   saveProfile(): void {
-    // Limpa mensagens anteriores
     this.message = null;
 
-    // Valida o formulário
     if (!this.validateForm()) {
       return;
     }
@@ -142,7 +126,6 @@ export class ProfileSetupComponent implements OnInit, OnDestroy {
             true
           );
 
-          // Redireciona para o chat após 2 segundos
           setTimeout(() => {
             this.router.navigate(['/chat']);
           }, 2000);
@@ -154,9 +137,6 @@ export class ProfileSetupComponent implements OnInit, OnDestroy {
       });
   }
 
-  /**
-   * Trata erros da requisição HTTP
-   */
   private handleError(error: HttpErrorResponse): void {
     console.error('Erro ao salvar perfil:', error);
 
@@ -181,14 +161,10 @@ export class ProfileSetupComponent implements OnInit, OnDestroy {
     }
   }
 
-  /**
-   * Exibe mensagem para o usuário
-   */
   private showMessage(message: string, isSuccess: boolean): void {
     this.message = message;
     this.isSuccess = isSuccess;
 
-    // Remove a mensagem após 5 segundos (exceto para sucesso com redirecionamento)
     if (!isSuccess) {
       setTimeout(() => {
         this.message = null;
@@ -196,18 +172,12 @@ export class ProfileSetupComponent implements OnInit, OnDestroy {
     }
   }
 
-  /**
-   * Limpa o formulário
-   */
   clearForm(): void {
     this.englishLevel = '';
     this.learningGoal = '';
     this.message = null;
   }
 
-  /**
-   * Verifica se o botão de salvar deve estar habilitado
-   */
   canSave(): boolean {
     return (
       !this.isLoading &&
@@ -218,9 +188,7 @@ export class ProfileSetupComponent implements OnInit, OnDestroy {
     );
   }
 
-  /**
-   * Logout do usuário
-   */
+
   logout(): void {
     this.authService.logout();
   }

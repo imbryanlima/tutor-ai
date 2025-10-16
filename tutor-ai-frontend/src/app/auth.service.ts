@@ -1,53 +1,57 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { Observable, tap } from 'rxjs';
 import { Router } from '@angular/router';
 
-interface AuthRequest {
-  email: string;
-  password: string;
-}
-interface AuthResponse {
-  token: string;
-  message: string;
-}
-
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
 export class AuthService {
   private apiUrl = '/api/auth';
-  private readonly TOKEN_KEY = 'auth_token';
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(private http: HttpClient, private router: Router) { }
 
-  register(credentials: AuthRequest): Observable<AuthResponse> {
-    return this.http
-      .post<AuthResponse>(`${this.apiUrl}/signup`, credentials)
-      .pipe(tap((response) => this.saveToken(response.token)));
+  public saveToken(token: string): void {
+    localStorage.setItem('auth_token', token);
   }
 
-  login(credentials: AuthRequest): Observable<AuthResponse> {
-    return this.http
-      .post<AuthResponse>(`${this.apiUrl}/login`, credentials)
-      .pipe(tap((response) => this.saveToken(response.token)));
+  public getToken(): string | null {
+    return localStorage.getItem('auth_token');
   }
 
-  saveToken(token: string): void {
-    localStorage.setItem(this.TOKEN_KEY, token);
+  // <<< MUDANÇA CRÍTICA AQUI: O MÉTODO QUE FALTAVA FOI ADICIONADO >>>
+  /**
+   * Verifica se o usuário está autenticado checando a existência de um token.
+   * @returns `true` se o token existir, `false` caso contrário.
+   */
+  public isLoggedIn(): boolean {
+    const token = this.getToken();
+    // A dupla negação (!!) transforma a string do token (ou null) em um booleano puro (true/false).
+    return !!token;
   }
 
-  getToken(): string | null {
-    return localStorage.getItem(this.TOKEN_KEY);
-  }
-
-  isLoggedIn(): boolean {
-    return !!localStorage.getItem(this.TOKEN_KEY);
-  }
-
-  logout(): void {
-    localStorage.removeItem(this.TOKEN_KEY);
+  public logout(): void {
+    localStorage.removeItem('auth_token');
     this.router.navigate(['/login']);
+  }
+
+  login(credentials: any): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/login`, credentials).pipe(
+      tap(response => {
+        if (response && response.token) {
+          this.saveToken(response.token);
+        }
+      })
+    );
+  }
+
+  register(userData: any): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/signup`, userData).pipe(
+      tap(response => {
+        if (response && response.token) {
+          this.saveToken(response.token);
+        }
+      })
+    );
   }
 }
