@@ -1,0 +1,26 @@
+<div class="chat-container">
+  <div class="message-list">
+
+    <div *ngFor="let msg of mensagens" 
+         class="message-bubble" 
+         [ngClass]="{ 'user-message': msg.autor === 'user', 'ia-message': msg.autor === 'ia' }">
+      
+      <p>{{ msg.texto }}</p>
+    </div>
+    
+    <div *ngIf="estaCarregando" class="message-bubble ia-message">
+      <p>Tutor AI está digitando...</p>
+    </div>
+  </div>
+
+  <form class="message-form" (ngSubmit)="enviarMensagem()">
+    <input 
+      type="text" 
+      [(ngModel)]="novaMensagem" 
+      name="novaMensagem" 
+      placeholder="Digite sua mensagem aqui..." 
+      autocomplete="off"
+    >
+    <button type="submit" [disabled]="estaCarregando">Enviar</button>
+  </form>
+</div>

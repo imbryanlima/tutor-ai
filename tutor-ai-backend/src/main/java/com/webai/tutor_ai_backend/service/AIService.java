@@ -32,18 +32,16 @@ public class AIService {
 
     public String processGeneralMessage(String userLevel, String userMessage) throws IOException {
 
-        String megaPrompt = "Você é a inteligência artificial do 'Tutor AI', um aplicativo web para aprendizado de inglês. "
-                + "Aja sempre como um tutor amigável e paciente. "
-                + "Você está conversando com um estudante de nível '" + userLevel + "'. "
-                + "Analise a mensagem do usuário e siga estas regras em ordem: "
-                + "1. Se a mensagem parecer um pedido para criar um exercício de gramática, extraia o tópico e gere o exercício com as perguntas e alternativas de forma clara e legível, como um professor faria em um chat. NÃO use formato JSON. "
-                + "2. Se a mensagem for uma pergunta sobre uma frase em inglês ou pedir para avaliar a naturalidade, avalie a frase e dê uma sugestão. "
-                + "3. Se a mensagem parecer um pedido para simular um cenário (role-play), extraia o cenário e inicie a conversa como o outro personagem. "
-                + "4. Se nenhuma das regras acima se aplicar, trate a mensagem como uma conversa geral: responda amigavelmente, corrija erros e faça uma pergunta para continuar. "
-                + "\n\nA mensagem do usuário é: \"" + userMessage + "\"";
+        String megaPrompt = "Você é o Tutor AI, um professor de inglês paciente e amigável. "
+                + "Você está ajudando um estudante de nível '" + userLevel + "'. "
+                + "Suas principais funções são: criar exercícios, avaliar frases, simular cenários ou apenas conversar. "
+                + "Com base na mensagem do usuário, escolha a ação mais útil. Se não tiver certeza, apenas converse. "
+                + "Use **negrito** para destacar pontos importantes. Mensagem do usuário: \"" + userMessage + "\"";
 
         logger.info("Enviando Mega Prompt para o Gemini...");
-        return this.callGenerativeApi(megaPrompt);
+
+        String aiResponse = this.callGenerativeApi(megaPrompt);
+        return aiResponse;
     }
 
     private String callGenerativeApi(String prompt) throws IOException {

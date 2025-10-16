@@ -26,11 +26,9 @@ export class AuthInterceptor implements HttpInterceptor {
       });
     }
 
-    // 2. Continua a requisição e usa o pipe para tratar erros 401/403
     return next.handle(request).pipe(
       catchError((error: HttpErrorResponse) => {
         if (error.status === 401 || error.status === 403) {
-          // Se o token falhar no servidor Java, limpa o token e força o logout
           this.authService.logout();
         }
         return throwError(() => error);
