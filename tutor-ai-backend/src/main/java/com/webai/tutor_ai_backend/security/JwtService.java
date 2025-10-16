@@ -17,8 +17,14 @@ import java.util.function.Function;
 @Service
 public class JwtService {
 
-    @Value("${app.jwt.secret}") private String SECRET; 
-    @Value("${app.jwt.expiration-ms}") private long jwtExpiration; 
+    @Value("${app.jwt.secret}")
+    private String SECRET;
+
+    @Value("${app.jwt.expiration-ms}")
+    private long jwtExpiration;
+
+    @Value("${app.jwt.refresh-expiration-ms}")
+    private long refreshExpiration;
 
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
@@ -31,9 +37,9 @@ public class JwtService {
 
     private Claims extractAllClaims(String token) {
         return Jwts
-                .parser() 
+                .parser()
                 .setSigningKey(getSigningKey())
-                .build() 
+                .build()
                 .parseClaimsJws(token)
                 .getBody();
     }
@@ -43,12 +49,20 @@ public class JwtService {
     }
 
     public String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
+        return buildToken(extraClaims, userDetails, jwtExpiration);
+    }
+
+    public String generateRefreshToken(UserDetails userDetails) {
+        return buildToken(new HashMap<>(), userDetails, refreshExpiration);
+    }
+
+    private String buildToken(Map<String, Object> extraClaims, UserDetails userDetails, long expiration) {
         return Jwts
                 .builder()
                 .setClaims(extraClaims)
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + jwtExpiration))
+                .setExpiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(getSigningKey(), io.jsonwebtoken.SignatureAlgorithm.HS256)
                 .compact();
     }

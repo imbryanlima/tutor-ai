@@ -14,8 +14,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/auth") 
-@CrossOrigin(origins = "http://localhost:4200") 
+@RequestMapping("/api/auth")
+@CrossOrigin(origins = "http://localhost:4200")
 public class AuthController {
 
     private final UserRepository userRepository;
@@ -23,7 +23,8 @@ public class AuthController {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
-    public AuthController(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtService jwtService, AuthenticationManager authenticationManager) {
+    public AuthController(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtService jwtService,
+            AuthenticationManager authenticationManager) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
@@ -39,12 +40,14 @@ public class AuthController {
         User newUser = new User();
         newUser.setEmail(request.getEmail());
         newUser.setPassword(passwordEncoder.encode(request.getPassword()));
-        
         userRepository.save(newUser);
 
-        String jwt = jwtService.generateToken(newUser);
+        String accessToken = jwtService.generateToken(newUser);
+        String refreshToken = jwtService.generateRefreshToken(newUser);
+
         return ResponseEntity.ok(AuthResponse.builder()
-                .token(jwt)
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
                 .message("Cadastro realizado com sucesso!")
                 .build());
     }
@@ -53,17 +56,19 @@ public class AuthController {
     public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest request) {
         try {
             authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
-            );
-            
+                    new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
+
             User userDetails = userRepository.findByEmail(request.getEmail()).orElseThrow();
-            String jwt = jwtService.generateToken(userDetails);
+
+            String accessToken = jwtService.generateToken(userDetails);
+            String refreshToken = jwtService.generateRefreshToken(userDetails);
 
             return ResponseEntity.ok(AuthResponse.builder()
-                    .token(jwt)
+                    .accessToken(accessToken)
+                    .refreshToken(refreshToken)
                     .message("Login bem-sucedido!")
                     .build());
-            
+
         } catch (AuthenticationException e) {
             return new ResponseEntity<>("Credenciais inválidas.", HttpStatus.UNAUTHORIZED);
         }

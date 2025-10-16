@@ -18,5 +18,15 @@
     "name": "gemini.api.key",
     "type": "java.lang.String",
     "description": "A description for 'gemini.api.key'"
+  },
+  {
+    "name": "app.jwt.refresh-expiration-ms",
+    "type": "java.lang.String",
+    "description": "A description for 'app.jwt.refresh-expiration-ms'"
+  }
+]}{
+    "name": "app.jwt.refresh-expiration-ms",
+    "type": "java.lang.String",
+    "description": "A description for 'app.jwt.refresh-expiration-ms'"
   }
 ]}
