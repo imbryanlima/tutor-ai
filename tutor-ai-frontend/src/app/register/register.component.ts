@@ -27,7 +27,6 @@ export class RegisterComponent {
       next: (response) => {
         console.log('Cadastro bem-sucedido. Token:', response.token);
         alert(response.message);
-        // Redireciona para o formulário de perfil logo após o cadastro
         this.router.navigate(['/profile-setup']);
       },
       error: (err) => {

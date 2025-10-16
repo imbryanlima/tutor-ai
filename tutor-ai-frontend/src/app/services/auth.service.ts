@@ -19,17 +19,19 @@ export class AuthService {
     return localStorage.getItem('auth_token');
   }
 
+  public isLoggedIn(): boolean {
+    const token = this.getToken();
+    return !!token;
+  }
+
   public logout(): void {
     localStorage.removeItem('auth_token');
-    // Leva o usuário de volta para a tela de login
     this.router.navigate(['/login']);
   }
 
   login(credentials: any): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}/login`, credentials).pipe(
-      // 'tap' permite executar uma ação sem modificar a resposta
       tap(response => {
-        // Se a resposta contiver um token, salva ele
         if (response && response.token) {
           this.saveToken(response.token);
         }

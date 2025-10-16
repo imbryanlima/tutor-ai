@@ -1,26 +1,37 @@
-<div class="chat-container">
-  <div class="message-list">
+<div class="chat-page-container">
+  <header class="chat-header">
+    <h1>Tutor AI</h1>
+    <p>Seu assistente pessoal de inglês</p>
+  </header>
 
-    <div *ngFor="let msg of mensagens" 
-         class="message-bubble" 
-         [ngClass]="{ 'user-message': msg.autor === 'user', 'ia-message': msg.autor === 'ia' }">
+  <div class="message-list-wrapper" #messageListWrapper>
+    <div class="message-list">
+      <div *ngFor="let msg of mensagens" 
+           class="message-bubble" 
+           [ngClass]="{ 'user-message': msg.autor === 'user', 'ia-message': msg.autor === 'ia' }">
+        <p>{{ msg.texto }}</p>
+      </div>
       
-      <p>{{ msg.texto }}</p>
-    </div>
-    
-    <div *ngIf="estaCarregando" class="message-bubble ia-message">
-      <p>Tutor AI está digitando...</p>
+      <div *ngIf="estaCarregando" class="message-bubble ia-message typing-indicator">
+        <p><span></span><span></span><span></span></p>
+      </div>
     </div>
   </div>
 
-  <form class="message-form" (ngSubmit)="enviarMensagem()">
-    <input 
-      type="text" 
-      [(ngModel)]="novaMensagem" 
-      name="novaMensagem" 
-      placeholder="Digite sua mensagem aqui..." 
-      autocomplete="off"
-    >
-    <button type="submit" [disabled]="estaCarregando">Enviar</button>
-  </form>
+  <div class="message-form-container">
+    <form class="message-form" (ngSubmit)="enviarMensagem()">
+      <input 
+        type="text" 
+        [(ngModel)]="novaMensagem" 
+        name="novaMensagem" 
+        placeholder="Pergunte algo ao Tutor AI..." 
+        autocomplete="off"
+      >
+      <button type="submit" [disabled]="!novaMensagem.trim() || estaCarregando">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+          <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+        </svg>
+      </button>
+    </form>
+  </div>
 </div>
