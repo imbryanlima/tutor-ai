@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { AuthService } from '../auth.service';
+import { AuthService } from '../services/auth.service';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -25,7 +25,7 @@ export class LoginComponent {
 
     this.authService.login({ email: this.email, password: this.password }).subscribe({
       next: (response) => {
-        console.log('Login bem-sucedido. Token recebido:', response.token);
+        console.log('Login bem-sucedido. Token recebido:', response.accessToken);
 
         this.router.navigate(['/profile-setup']);
       },

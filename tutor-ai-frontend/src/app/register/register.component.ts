@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { AuthService } from '../auth.service';
+import { AuthService } from '../services/auth.service';
 import { Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -25,7 +25,7 @@ export class RegisterComponent {
 
     this.authService.register({ email: this.email, password: this.password }).subscribe({
       next: (response) => {
-        console.log('Cadastro bem-sucedido. Token:', response.token);
+        console.log('Cadastro bem-sucedido. Token:', response.acessToken);
         alert(response.message);
         this.router.navigate(['/profile-setup']);
       },

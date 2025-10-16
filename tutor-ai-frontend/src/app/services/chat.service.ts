@@ -9,7 +9,7 @@ import { AuthService } from './auth.service';
   providedIn: 'root'
 })
 export class ChatService {
-  private apiUrl = '/api/ai/message';
+  private apiBase = '/api/ai/';
 
   constructor(private http: HttpClient, private authService: AuthService) { }
 
@@ -25,8 +25,16 @@ export class ChatService {
       'Authorization': `Bearer ${token}`
     });
 
-    const body = { message: message };
+    const body = { message };
 
-    return this.http.post(this.apiUrl, body, { headers, responseType: 'text' });
+    return this.http.post<string>(`${this.apiBase}message`, body, { headers, responseType: 'text' as 'json' });
+  }
+
+  getHistorico(token: string): Observable<{ autor: 'user' | 'ia', texto: string }[]> {
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+
+    return this.http.get<{ autor: 'user' | 'ia', texto: string }[]>(`${this.apiBase}history`, { headers });
   }
 }

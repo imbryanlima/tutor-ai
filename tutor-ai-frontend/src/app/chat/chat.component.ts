@@ -1,70 +1,206 @@
-import { Component, ViewChild, ElementRef, AfterViewChecked } from '@angular/core';
-import { ChatService } from '../services/chat.service';
-
-// Imports que já tínhamos
+import {
+  Component,
+  ViewChild,
+  ElementRef,
+  OnInit,
+  AfterViewInit,
+  OnDestroy,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-// (Se você voltar a usar o SafeHtmlPipe, o import estaria aqui)
+import { ChatService } from '../services/chat.service';
+
+// PrimeNG v20
+import { ButtonModule } from 'primeng/button';
+import { TextareaModule } from 'primeng/textarea';
+import { SkeletonModule } from 'primeng/skeleton';
+import { RippleModule } from 'primeng/ripple';
+
+type Autor = 'user' | 'ia';
+export interface Mensagem { autor: Autor; texto: string; }
 
 @Component({
   selector: 'app-chat',
   standalone: true,
-  imports: [ CommonModule, FormsModule ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    CommonModule,
+    FormsModule,
+    ButtonModule,
+    TextareaModule,
+    SkeletonModule,
+    RippleModule,
+  ],
   templateUrl: './chat.component.html',
   styleUrls: ['./chat.component.css']
 })
-export class ChatComponent implements AfterViewChecked { // <<< MUDANÇA 1: Implementa AfterViewChecked
+export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
 
-  // <<< MUDANÇA 2: Pega o elemento HTML com a #tag 'messageListWrapper' >>>
-  @ViewChild('messageListWrapper') private messageListWrapper!: ElementRef;
+  @ViewChild('messageListWrapper') messageListWrapper?: ElementRef<HTMLDivElement>;
 
-  mensagens: { autor: 'user' | 'ia', texto: string }[] = [];
-  novaMensagem: string = '';
-  estaCarregando: boolean = false;
+  mensagens: Mensagem[] = [];
+  novaMensagem = '';
+  estaCarregandoHistorico = false;
+  estaCarregandoResposta = false;
 
-  constructor(private chatService: ChatService) { }
+  // Público para *ngIf no template
+  userAwayFromBottom = false;
 
-  // <<< MUDANÇA 3: Este método é chamado toda vez que a tela é atualizada >>>
-  ngAfterViewChecked(): void {
-    this.scrollToBottom();
-  }
+  private scrollListener?: (ev: Event) => void;
 
-  enviarMensagem(): void {
-    if (this.novaMensagem.trim() === '') {
-      return;
+  constructor(
+    private chatService: ChatService,
+    private cdr: ChangeDetectorRef,
+  ) {}
+
+  ngOnInit(): void {
+    const token = localStorage.getItem('auth_token');
+    if (!token) return;
+
+    // 1) Cache local (se houver)
+    const cache = localStorage.getItem('chat.history');
+    if (cache) {
+      try {
+        this.mensagens = JSON.parse(cache) as Mensagem[];
+      } catch {
+        this.mensagens = [];
+      }
     }
-    
-    this.mensagens.push({ autor: 'user', texto: this.novaMensagem });
-    
-    const mensagemParaEnviar = this.novaMensagem;
-    this.novaMensagem = '';
-    this.estaCarregando = true;
 
-    // Força a rolagem para a mensagem do usuário imediatamente
-    this.scrollToBottom();
+    // 2) Estado de carregamento do histórico só se não houver cache
+    this.estaCarregandoHistorico = this.mensagens.length === 0;
+    this.cdr.markForCheck();
 
-    this.chatService.sendMessage(mensagemParaEnviar).subscribe({
-      next: (respostaDaIA) => {
-        this.mensagens.push({ autor: 'ia', texto: respostaDaIA });
-        this.estaCarregando = false;
+    // 3) Buscar histórico do backend
+    this.chatService.getHistorico(token).subscribe({
+      next: (historico: any[]) => {
+        this.mensagens = this.normalizeHistorico(historico);
+        this.persistCache();
+        this.estaCarregandoHistorico = false;
+        this.cdr.markForCheck();
+
+        // rola ao final após renderizar
+        setTimeout(() => this.scrollToBottom(true), 0);
       },
       error: (erro) => {
-        this.mensagens.push({ autor: 'ia', texto: 'Desculpe, algo deu errado. Tente novamente.' });
-        console.error(erro);
-        this.estaCarregando = false;
+        console.error('Erro ao buscar histórico:', erro);
+        this.estaCarregandoHistorico = false;
+        this.cdr.markForCheck();
       }
     });
   }
 
-  // <<< MUDANÇA 4: A função que faz a mágica de rolar para baixo >>>
-  private scrollToBottom(): void {
-    try {
-      // Pequeno timeout para garantir que o DOM foi atualizado antes de rolar
-      setTimeout(() => {
-        this.messageListWrapper.nativeElement.scrollTop = this.messageListWrapper.nativeElement.scrollHeight;
-      }, 0);
-    } catch(err) {
-      console.error("Erro ao rolar o chat:", err);
+  ngAfterViewInit(): void {
+    const el = this.messageListWrapper?.nativeElement;
+    if (!el) return;
+
+    this.scrollListener = () => {
+      const threshold = 80; // px
+      const atBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - threshold;
+      this.userAwayFromBottom = !atBottom;
+      this.cdr.markForCheck();
+    };
+
+    el.addEventListener('scroll', this.scrollListener, { passive: true });
+
+    // Se já havia mensagens (cache), garanta posicionamento inicial
+    setTimeout(() => this.scrollToBottom(true), 0);
+  }
+
+  ngOnDestroy(): void {
+    const el = this.messageListWrapper?.nativeElement;
+    if (el && this.scrollListener) {
+      el.removeEventListener('scroll', this.scrollListener);
     }
+  }
+
+  enviarMensagem(): void {
+    const texto = this.novaMensagem?.trim();
+    if (!texto) return;
+
+    // adiciona mensagem do usuário
+    this.mensagens.push({ autor: 'user', texto });
+    this.persistCache();
+    this.novaMensagem = '';
+    this.estaCarregandoResposta = true;
+    this.cdr.markForCheck();
+
+    // rola ao final (forçado porque foi o usuário que enviou)
+    this.scrollToBottom(true);
+
+    // chama backend
+    this.chatService.sendMessage(texto).subscribe({
+      next: (respostaDaIA: string) => {
+        this.mensagens.push({ autor: 'ia', texto: respostaDaIA });
+        this.estaCarregandoResposta = false;
+        this.persistCache();
+        this.cdr.markForCheck();
+
+        // rola ao final somente se usuário estiver próximo do fim
+        this.scrollToBottom(false);
+      },
+      error: (erro) => {
+        console.error(erro);
+        this.mensagens.push({ autor: 'ia', texto: 'Desculpe, algo deu errado. Tente novamente.' });
+        this.estaCarregandoResposta = false;
+        this.persistCache();
+        this.cdr.markForCheck();
+
+        this.scrollToBottom(false);
+      }
+    });
+  }
+
+  onEnterKey(event: KeyboardEvent | Event) {
+    const e = event as KeyboardEvent;
+    if (!e.shiftKey) {
+      e.preventDefault?.();
+      this.enviarMensagem();
+    }
+  }
+
+  goToBottom() {
+    this.scrollToBottom(true);
+  }
+
+  trackByIndex(i: number) { return i; }
+
+  private scrollToBottom(force = false): void {
+    const el = this.messageListWrapper?.nativeElement;
+    if (!el) return;
+
+    if (force || !this.userAwayFromBottom) {
+      el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' });
+    }
+  }
+
+  private persistCache() {
+    try {
+      localStorage.setItem('chat.history', JSON.stringify(this.mensagens));
+    } catch {}
+  }
+
+  /** Normaliza qualquer formato do backend para {autor:'user'|'ia', texto:string} */
+  private normalizeHistorico(historico: any[]): Mensagem[] {
+    if (!Array.isArray(historico)) return [];
+
+    return historico.map((mensagem: string): Mensagem => {
+      if (typeof mensagem !== 'string') return { autor: 'ia', texto: '' };
+
+      let autor: Autor = 'ia'; // padrão
+      let texto = mensagem;
+
+      if (mensagem.toLowerCase().startsWith('usuário:')) {
+        autor = 'user';
+        texto = mensagem.substring(8).trim();
+      } else if (mensagem.toLowerCase().startsWith('ia:')) {
+        autor = 'ia';
+        texto = mensagem.substring(3).trim();
+      }
+
+      return { autor, texto };
+    });
   }
 }

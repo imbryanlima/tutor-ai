@@ -1,5 +1,6 @@
 package com.webai.tutor_ai_backend.model;
 
+import java.util.List;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -17,6 +18,7 @@ public class UserProfile {
 
     private String englishLevel;
     private String learningGoal;
+    private List <String> musicGenres;
     
     public UserProfile() {}
 

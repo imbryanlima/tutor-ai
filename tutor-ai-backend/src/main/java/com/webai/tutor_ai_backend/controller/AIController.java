@@ -6,6 +6,12 @@ import com.webai.tutor_ai_backend.model.UserProfile;
 import com.webai.tutor_ai_backend.repository.UserProfileRepository;
 import com.webai.tutor_ai_backend.repository.UserRepository;
 import com.webai.tutor_ai_backend.service.AIService;
+
+import jakarta.servlet.http.HttpSession;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -31,7 +37,9 @@ public class AIController {
     }
 
     @PostMapping("/message")
-    public ResponseEntity<String> handleMessage(@RequestBody ChatMessageRequest request, Authentication authentication) {
+    public ResponseEntity<String> handleMessage(@RequestBody ChatMessageRequest request,
+                                                Authentication authentication,
+                                                HttpSession session) {
         try {
             String userEmail = authentication.getName();
             User currentUser = userRepository.findByEmail(userEmail)
@@ -44,15 +52,28 @@ public class AIController {
                 return ResponseEntity.badRequest().body("Por favor, defina seu nível de inglês no perfil.");
             }
 
-            String aiResponse = aiService.processGeneralMessage(userLevel, request.getMessage());
+            List<String> history = (List<String>) session.getAttribute("chatHistory");
+            if (history == null) history = new ArrayList<>();
+
+            history.add("Usuário: " + request.getMessage());
+
+            String aiResponse = aiService.processConversationWithHistory(userLevel, history);
+
+            history.add("IA: " + aiResponse);
+            session.setAttribute("chatHistory", history);
 
             return ResponseEntity.ok(aiResponse);
 
         } catch (Exception e) {
             logger.error("Erro inesperado ao processar a mensagem do usuário {}", authentication.getName(), e);
-
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Desculpe, não consegui processar sua solicitação no momento. Tente novamente mais tarde.");
         }
+    }
+
+    @GetMapping("/history")
+    public ResponseEntity<List<String>> getHistory(HttpSession session) {
+        List<String> history = (List<String>) session.getAttribute("chatHistory");
+        return ResponseEntity.ok(history != null ? history : List.of());
     }
 }

@@ -45,6 +45,7 @@ public class ProfileController {
         
         profile.setEnglishLevel(request.getEnglishLevel());
         profile.setLearningGoal(request.getLearningGoal());
+        profile.setMusicGenres(request.getMusicGenres());
         
         userProfileRepository.save(profile);
         
@@ -53,5 +54,33 @@ public class ProfileController {
             Map.of("message", "Perfil atualizado! Você está pronto para conversar!", 
                    "englishLevel", request.getEnglishLevel())
         );
+    }
+    @GetMapping("/get")
+    public ResponseEntity<?> getProfile() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userEmail = authentication.getName();
+
+        User currentUser = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new RuntimeException("Usuário autenticado não encontrado."));
+
+        UserProfile profile = userProfileRepository.findByUserId(currentUser.getId())
+                .orElse(null);
+
+        if (profile == null) {
+            return ResponseEntity.ok(Map.of(
+                "success", false,
+                "message", "Perfil não encontrado."
+            ));
+        }
+
+        return ResponseEntity.ok(Map.of(
+            "success", true,
+            "message", "Perfil carregado com sucesso.",
+            "profile", Map.of(
+                "englishLevel", profile.getEnglishLevel(),
+                "learningGoal", profile.getLearningGoal(),
+                "musicGenres", profile.getMusicGenres()
+            )
+        ));
     }
 }

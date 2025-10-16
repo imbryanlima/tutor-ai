@@ -9,6 +9,7 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -79,5 +80,24 @@ public class AIService {
         }
 
         return textNode.asText();
+    }
+
+    public String processConversationWithHistory(String userLevel, List<String> history) throws IOException {
+
+        StringBuilder prompt = new StringBuilder();
+        prompt.append("Você é o Tutor AI, um professor de inglês paciente e amigável. ");
+        prompt.append("Você está ajudando um estudante de nível '").append(userLevel).append("'. ");
+        prompt.append("Suas funções são: criar exercícios, avaliar frases, simular diálogos ou apenas conversar. ");
+        prompt.append("Com base na conversa abaixo, continue respondendo de forma natural e educativa.\n\n");
+
+        for (String linha : history) {
+            prompt.append(linha).append("\n");
+        }
+
+        prompt.append("IA: ");
+
+        logger.info("Enviando histórico para a IA. Total de mensagens: {}", history.size());
+
+        return callGenerativeApi(prompt.toString());
     }
 }

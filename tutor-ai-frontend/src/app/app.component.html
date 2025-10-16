@@ -1,21 +1,24 @@
-<main class="container-fluid p-0">
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
-    <div class="container-fluid">
-      <a class="navbar-brand" routerLink="/">Tutor AI</a>
+<main class="layout-container">
+  <nav class="navbar shadow-sm">
+    <div class="navbar-content container-fluid">
+      <a class="navbar-brand" routerLink="/">
+        <i class="pi pi-sparkles me-2"></i> Tutor AI
+      </a>
 
-      <div class="d-flex ms-auto">
+      <div class="d-flex ms-auto align-items-center">
         <button
           *ngIf="authService.isLoggedIn()"
           (click)="authService.logout()"
-          class="btn btn-outline-danger"
+          class="btn btn-outline-danger d-flex align-items-center gap-2"
         >
-          Sair
+          <i class="pi pi-sign-out"></i>
+          <span>Sair</span>
         </button>
       </div>
     </div>
   </nav>
 
-  <div class="content mt-4">
+  <section class="content">
     <router-outlet></router-outlet>
-  </div>
+  </section>
 </main>

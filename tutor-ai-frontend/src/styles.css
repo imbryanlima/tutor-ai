@@ -1,25 +1,29 @@
+@import "primeicons/primeicons.css";
 
-body {
-  font-family: 'Inter', sans-serif;
-  background-color: #f4f7f6; 
+/* Aplica visual escuro global */
+html, body {
+  height: 100%;
   margin: 0;
   padding: 0;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
+  font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background-color: #111827;
+  color: #e5edff;
 }
 
+/* Container padrão */
 .container {
   padding-top: 50px;
   padding-bottom: 50px;
 }
 
+/* Cartões */
 .card {
   border: none;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
+/* Headers */
 h2 {
   font-weight: 700;
 }
@@ -30,6 +34,7 @@ h2 {
   padding: 20px;
 }
 
+/* Inputs e botões */
 .form-control {
   border-radius: 8px;
   border: 1px solid #ced4da;
@@ -38,8 +43,8 @@ h2 {
 }
 
 .form-control:focus {
-  border-color: #007bff;
-  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+  border-color: #6366f1;
+  box-shadow: 0 0 0 0.2rem rgba(99, 102, 241, 0.25);
 }
 
 .btn {
@@ -49,16 +54,16 @@ h2 {
 }
 
 .btn-primary {
-  background-color: #007bff;
-  border-color: #007bff;
+  background-color: #6366f1;
+  border-color: #6366f1;
 }
 .btn-success {
-  background-color: #28a745;
-  border-color: #28a745;
+  background-color: #10b981;
+  border-color: #10b981;
 }
 .btn-info {
-  background-color: #17a2b8;
-  border-color: #17a2b8;
+  background-color: #3b82f6;
+  border-color: #3b82f6;
 }
 
 .btn-primary:hover,
@@ -73,13 +78,4 @@ h2 {
   border-color: #f5c6cb;
   border-radius: 8px;
   margin-top: 15px;
-}
-
-html, body {
-  height: 100%;
-  margin: 0;
-  padding: 0;
-  overflow: hidden; /* A MÁGICA: Impede a página inteira de rolar */
-  font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
-  background-color: #111827; /* Garante que o fundo seja sempre escuro */
 }

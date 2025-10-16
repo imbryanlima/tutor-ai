@@ -1,36 +1,67 @@
 <div class="chat-page-container">
   <header class="chat-header">
-    <h1>Tutor AI</h1>
+    <h1><i class="pi pi-sparkles"></i> Tutor AI</h1>
     <p>Seu assistente pessoal de inglês</p>
   </header>
 
   <div class="message-list-wrapper" #messageListWrapper>
     <div class="message-list">
-      <div *ngFor="let msg of mensagens" 
-           class="message-bubble" 
-           [ngClass]="{ 'user-message': msg.autor === 'user', 'ia-message': msg.autor === 'ia' }">
+
+      <!-- Carregando histórico (quando não há cache) -->
+      <ng-container *ngIf="estaCarregandoHistorico && mensagens.length === 0">
+        <div class="message-loading">
+          <p-skeleton width="60%" height="2rem" styleClass="mb-2"></p-skeleton>
+          <p-skeleton width="45%" height="2rem" styleClass="mb-2"></p-skeleton>
+          <p-skeleton width="70%" height="2rem"></p-skeleton>
+        </div>
+      </ng-container>
+
+      <!-- Mensagens -->
+      <div
+        *ngFor="let msg of mensagens; trackBy: trackByIndex"
+        class="message-bubble"
+        [ngClass]="{ 'user-message': msg.autor === 'user', 'ia-message': msg.autor === 'ia' }">
         <p>{{ msg.texto }}</p>
       </div>
-      
-      <div *ngIf="estaCarregando" class="message-bubble ia-message typing-indicator">
+
+      <!-- Indicador de "IA digitando" -->
+      <div *ngIf="estaCarregandoResposta" class="message-bubble ia-message typing-indicator">
         <p><span></span><span></span><span></span></p>
       </div>
     </div>
+
+    <!-- Botão flutuante para descer até o final -->
+    <button
+      *ngIf="userAwayFromBottom"
+      type="button"
+      pButton
+      pRipple
+      class="scroll-bottom-btn"
+      icon="pi pi-arrow-down"
+      (click)="goToBottom()">
+    </button>
   </div>
 
   <div class="message-form-container">
     <form class="message-form" (ngSubmit)="enviarMensagem()">
-      <input 
-        type="text" 
-        [(ngModel)]="novaMensagem" 
-        name="novaMensagem" 
-        placeholder="Pergunte algo ao Tutor AI..." 
-        autocomplete="off"
-      >
-      <button type="submit" [disabled]="!novaMensagem.trim() || estaCarregando">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
-          <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
-        </svg>
+      <textarea
+        pTextarea
+        [autoResize]="true"
+        [(ngModel)]="novaMensagem"
+        name="novaMensagem"
+        placeholder="Pergunte algo ao Tutor AI..."
+        rows="1"
+        (keydown.enter)="onEnterKey($event)">
+      </textarea>
+
+      <button
+        pButton
+        pRipple
+        type="submit"
+        [disabled]="!novaMensagem.trim() || estaCarregandoResposta"
+        icon="pi pi-send"
+        label=""
+        class="send-button">
       </button>
     </form>
   </div>

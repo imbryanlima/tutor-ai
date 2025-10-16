@@ -13,7 +13,9 @@ export class AuthService {
 
   public saveToken(token: string): void {
     localStorage.setItem('auth_token', token);
+    console.log('[AuthService] Token salvo:', token);
   }
+
 
   public getToken(): string | null {
     return localStorage.getItem('auth_token');
@@ -30,20 +32,24 @@ export class AuthService {
   }
 
   login(credentials: any): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/login`, credentials).pipe(
-      tap(response => {
-        if (response && response.token) {
-          this.saveToken(response.token);
-        }
-      })
-    );
-  }
+  return this.http.post<any>(`${this.apiUrl}/login`, credentials).pipe(
+    tap(response => {
+      console.log('[AuthService] Resposta do login:', response);
+
+      if (response && response.accessToken) {
+        this.saveToken(response.accessToken);
+      } else {
+        console.warn('[AuthService] accessToken ausente!');
+      }
+    })
+  );
+}
 
   register(userData: any): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}/signup`, userData).pipe(
       tap(response => {
-        if (response && response.token) {
-          this.saveToken(response.token);
+        if (response && response.acessToken) {
+          this.saveToken(response.acessToken);
         }
       })
     );

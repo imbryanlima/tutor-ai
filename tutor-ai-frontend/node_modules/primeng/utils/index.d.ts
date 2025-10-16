@@ -1,0 +1,43 @@
+declare class ObjectUtils {
+    static isArray(value: any, empty?: boolean): boolean;
+    static isObject(value: any, empty?: boolean): boolean;
+    static equals(obj1: any, obj2: any, field?: string): boolean;
+    static equalsByValue(obj1: any, obj2: any): boolean;
+    static resolveFieldData(data: any, field: any): any;
+    static isFunction(obj: any): boolean;
+    static reorderArray(value: any[], from: number, to: number): void;
+    static insertIntoOrderedArray(item: any, index: number, arr: any[], sourceArr: any[]): void;
+    static findIndexInList(item: any, list: any): number;
+    static contains(value: any, list: any): boolean;
+    static removeAccents(str: any): any;
+    static isDate(input: any): boolean;
+    static isEmpty(value: any): boolean;
+    static isNotEmpty(value: any): boolean;
+    static compare(value1: any, value2: any, locale: any, order?: number): number;
+    static sort(value1: any, value2: any, order: number | undefined, locale: any, nullSortOrder?: number): number;
+    static merge(obj1?: any, obj2?: any): any;
+    static isPrintableCharacter(char?: string): false | RegExpMatchArray | null;
+    static getItemValue(obj: any, ...params: any[]): any;
+    static findLastIndex(arr: any, callback: any): number;
+    static findLast(arr: any, callback: any): any;
+    static deepEquals(a: any, b: any): boolean;
+    static minifyCSS(css: any): any;
+    static toFlatCase(str: string): string;
+    static isString(value: any, empty?: boolean): boolean;
+}
+
+declare function UniqueComponentId(prefix?: string): string;
+
+declare const _default: {
+    get: (el: any) => number;
+    set: (key: any, el: any, baseZIndex: any) => void;
+    clear: (el: any) => void;
+    getCurrent: () => any;
+    generateZIndex: (key: any, baseZIndex: any) => any;
+    revertZIndex: (zIndex: any) => void;
+};
+
+declare const transformToBoolean: (value: any) => boolean;
+declare const transformToNumber: (value: string | number) => number;
+
+export { ObjectUtils, UniqueComponentId, _default as ZIndexUtils, transformToBoolean, transformToNumber };

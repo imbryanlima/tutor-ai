@@ -1,54 +1,68 @@
+/* Reset e estrutura básica */
 html,
 body {
   height: 100%;
   margin: 0;
   padding: 0;
-  background: radial-gradient(circle at top left, #0b0f2f, #05061a);
-  color: #fff;
   font-family: 'Inter', 'Segoe UI', sans-serif;
+  background: radial-gradient(circle at top left, #0b0f2f, #05061a);
+  color: #ffffff;
 }
 
-main {
-  min-height: 100vh;
+.layout-container {
   display: flex;
   flex-direction: column;
+  height: 100vh;
 }
 
 /* ================================
-   Navbar
+   Navbar modernizada
 ================================ */
 .navbar {
   position: sticky;
   top: 0;
   z-index: 1000;
-  background: rgba(15, 15, 30, 0.95);
-  backdrop-filter: blur(6px);
+  background: rgba(15, 15, 30, 0.85);
+  backdrop-filter: blur(10px);
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  padding: 0.8rem 1.5rem;
+  padding: 0.75rem 1.25rem;
+}
+
+.navbar-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .navbar-brand {
   font-weight: 600;
-  font-size: 1.2rem;
-  color: #fff !important;
-  transition: 0.3s;
+  font-size: 1.3rem;
+  color: #e0e7ff !important;
+  text-decoration: none;
+  transition: 0.3s ease;
+  display: flex;
+  align-items: center;
 }
 
 .navbar-brand:hover {
-  color: #8a6dff !important;
+  color: #a78bfa !important;
 }
 
-/* Botão Sair */
+/* Botão Sair com ícone */
 .btn-outline-danger {
   border-color: #ff4c4c;
   color: #ff4c4c;
   font-weight: 500;
-  transition: all 0.2s ease-in-out;
+  transition: all 0.25s ease;
+  padding: 0.45rem 0.9rem;
+  font-size: 0.95rem;
+  border-radius: 8px;
+  background-color: transparent;
 }
 
 .btn-outline-danger:hover {
   background-color: #ff4c4c;
-  color: white;
+  color: #ffffff;
 }
 
 /* ================================
@@ -56,24 +70,35 @@ main {
 ================================ */
 .content {
   flex: 1;
-  padding: 2rem;
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: stretch;
+  padding: 1rem;
   background: radial-gradient(circle at center, #0a0d2e 0%, #05061a 100%);
-  animation: fadeIn 0.4s ease-in;
+  animation: fadeIn 0.4s ease-in-out;
+
 }
 
-/* ================================
-   Animação
-================================ */
+/* Animação */
 @keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(6px);
   }
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+  .navbar-brand {
+    font-size: 1.1rem;
+  }
+
+  .btn-outline-danger {
+    padding: 0.4rem 0.75rem;
+    font-size: 0.9rem;
   }
 }

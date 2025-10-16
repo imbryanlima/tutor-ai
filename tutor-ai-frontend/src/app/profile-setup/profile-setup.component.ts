@@ -1,34 +1,36 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
-import { HttpClient, HttpClientModule, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
-import { AuthService } from '../auth.service';
+import { AuthService } from '../services/auth.service';
 
 interface ProfileData {
   englishLevel: string;
   learningGoal: string;
+  musicGenres?: string[]; // agora é compatível com a nova resposta
 }
 
 interface ApiResponse {
-  message: string;
-  profile?: any;
   success: boolean;
+  message: string;
+  profile?: ProfileData;
 }
 
 @Component({
   selector: 'app-profile-setup',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, HttpClientModule],
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './profile-setup.component.html',
   styleUrls: ['./profile-setup.component.css'],
 })
 export class ProfileSetupComponent implements OnInit, OnDestroy {
   englishLevel: string = '';
   learningGoal: string = '';
+  musicGenres: string[] = [];
 
   message: string | null = null;
   isSuccess: boolean = false;
@@ -40,12 +42,6 @@ export class ProfileSetupComponent implements OnInit, OnDestroy {
   constructor(private http: HttpClient, private router: Router, public authService: AuthService) {}
 
   ngOnInit(): void {
-    if (!this.authService.isLoggedIn()) {
-      this.router.navigate(['/login']);
-      return;
-    }
-
-    // Carrega perfil existente se disponível
     this.loadExistingProfile();
   }
 
@@ -53,6 +49,7 @@ export class ProfileSetupComponent implements OnInit, OnDestroy {
     this.destroy$.next();
     this.destroy$.complete();
   }
+
   private loadExistingProfile(): void {
     this.isLoading = true;
 
@@ -64,6 +61,9 @@ export class ProfileSetupComponent implements OnInit, OnDestroy {
           if (response.success && response.profile) {
             this.englishLevel = response.profile.englishLevel || '';
             this.learningGoal = response.profile.learningGoal || '';
+            this.musicGenres = response.profile.musicGenres || [];
+          } else {
+            this.showMessage(response.message || 'Perfil não encontrado.', false);
           }
           this.isLoading = false;
         },
@@ -86,10 +86,7 @@ export class ProfileSetupComponent implements OnInit, OnDestroy {
     }
 
     if (this.learningGoal.trim().length < 10) {
-      this.showMessage(
-        'Por favor, forneça uma descrição mais detalhada do seu objetivo (mínimo 10 caracteres).',
-        false
-      );
+      this.showMessage('Por favor, forneça uma descrição mais detalhada do seu objetivo (mínimo 10 caracteres).', false);
       return false;
     }
 
@@ -113,6 +110,7 @@ export class ProfileSetupComponent implements OnInit, OnDestroy {
     const profileData: ProfileData = {
       englishLevel: this.englishLevel.trim(),
       learningGoal: this.learningGoal.trim(),
+      musicGenres: this.musicGenres,
     };
 
     this.http
@@ -175,6 +173,7 @@ export class ProfileSetupComponent implements OnInit, OnDestroy {
   clearForm(): void {
     this.englishLevel = '';
     this.learningGoal = '';
+    this.musicGenres = [];
     this.message = null;
   }
 
@@ -188,14 +187,10 @@ export class ProfileSetupComponent implements OnInit, OnDestroy {
     );
   }
 
-
   logout(): void {
     this.authService.logout();
   }
 
-  /**
-   * Navega para a página do chat
-   */
   navigateToChat(): void {
     this.router.navigate(['/chat']);
   }
