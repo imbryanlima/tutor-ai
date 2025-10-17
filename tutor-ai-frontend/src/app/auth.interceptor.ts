@@ -17,17 +17,22 @@ export class AuthInterceptor implements HttpInterceptor {
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     const token = this.authService.getToken();
 
-    if (token && token !== 'null' && token.trim() !== '') {
+    const publicRoutes = ['/api/auth/login', '/api/auth/singup'];
+
+    const isPublicRoute = publicRoutes.some(route => request.url.includes(route));
+
+    if (token && !isPublicRoute) {
       request = request.clone({
         setHeaders: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${token}`
         },
       });
     }
 
-    return next.handle(request).pipe(
+ return next.handle(request).pipe(
       catchError((error: HttpErrorResponse) => {
-        if (error.status === 401 || error.status === 403) {
+        if (!isPublicRoute && (error.status === 401 || error.status === 403)) {
+          console.error('Token inválido ou expirado. Deslogando...');
           this.authService.logout();
         }
         return throwError(() => error);
@@ -35,3 +40,4 @@ export class AuthInterceptor implements HttpInterceptor {
     );
   }
 }
+

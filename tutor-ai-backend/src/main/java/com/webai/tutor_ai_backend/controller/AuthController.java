@@ -5,6 +5,9 @@ import com.webai.tutor_ai_backend.dto.LoginRequest;
 import com.webai.tutor_ai_backend.model.User;
 import com.webai.tutor_ai_backend.repository.UserRepository;
 import com.webai.tutor_ai_backend.security.JwtService;
+
+import jakarta.validation.Valid;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -32,7 +35,7 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<?> registerUser(@RequestBody LoginRequest request) {
+    public ResponseEntity<?> registerUser(@Valid @RequestBody LoginRequest request) {
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
             return new ResponseEntity<>("Email já está em uso!", HttpStatus.BAD_REQUEST);
         }
