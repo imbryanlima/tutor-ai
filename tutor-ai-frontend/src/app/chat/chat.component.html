@@ -6,7 +6,6 @@
 
   <div class="message-list-wrapper" #messageListWrapper>
     <div class="message-list">
-
       <!-- Carregando histórico (quando não há cache) -->
       <ng-container *ngIf="estaCarregandoHistorico && mensagens.length === 0">
         <div class="message-loading">
@@ -20,8 +19,21 @@
       <div
         *ngFor="let msg of mensagens; trackBy: trackByIndex"
         class="message-bubble"
-        [ngClass]="{ 'user-message': msg.autor === 'user', 'ia-message': msg.autor === 'ia' }">
+        [ngClass]="{ 'user-message': msg.autor === 'user', 'ia-message': msg.autor === 'ia' }"
+      >
         <p>{{ msg.texto }}</p>
+
+        <!-- Botão de áudio apenas para mensagens da IA -->
+        <button
+          *ngIf="msg.autor === 'ia'"
+          pButton
+          pRipple
+          type="button"
+          class="play-audio-btn"
+          (click)="falar(msg.texto)"
+        >
+          <i class="pi" [ngClass]="isSpeaking ? 'pi-pause' : 'pi-play'"></i>
+        </button>
       </div>
 
       <!-- Indicador de "IA digitando" -->
@@ -38,8 +50,8 @@
       pRipple
       class="scroll-bottom-btn"
       icon="pi pi-arrow-down"
-      (click)="goToBottom()">
-    </button>
+      (click)="goToBottom()"
+    ></button>
   </div>
 
   <div class="message-form-container">
@@ -51,7 +63,8 @@
         name="novaMensagem"
         placeholder="Pergunte algo ao Tutor AI..."
         rows="1"
-        (keydown.enter)="onEnterKey($event)">
+        (keydown.enter)="onEnterKey($event)"
+      >
       </textarea>
 
       <button
@@ -61,8 +74,8 @@
         [disabled]="!novaMensagem.trim() || estaCarregandoResposta"
         icon="pi pi-send"
         label=""
-        class="send-button">
-      </button>
+        class="send-button"
+      ></button>
     </form>
   </div>
 </div>

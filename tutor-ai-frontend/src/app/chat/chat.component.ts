@@ -19,25 +19,20 @@ import { SkeletonModule } from 'primeng/skeleton';
 import { RippleModule } from 'primeng/ripple';
 
 type Autor = 'user' | 'ia';
-export interface Mensagem { autor: Autor; texto: string; }
+export interface Mensagem {
+  autor: Autor;
+  texto: string;
+}
 
 @Component({
   selector: 'app-chat',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    CommonModule,
-    FormsModule,
-    ButtonModule,
-    TextareaModule,
-    SkeletonModule,
-    RippleModule,
-  ],
+  imports: [CommonModule, FormsModule, ButtonModule, TextareaModule, SkeletonModule, RippleModule],
   templateUrl: './chat.component.html',
-  styleUrls: ['./chat.component.css']
+  styleUrls: ['./chat.component.css'],
 })
 export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
-
   @ViewChild('messageListWrapper') messageListWrapper?: ElementRef<HTMLDivElement>;
 
   mensagens: Mensagem[] = [];
@@ -50,10 +45,10 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private scrollListener?: (ev: Event) => void;
 
-  constructor(
-    private chatService: ChatService,
-    private cdr: ChangeDetectorRef,
-  ) {}
+  public isSpeaking: boolean = false; // se está falando atualmente
+  public currentUtterance?: SpeechSynthesisUtterance; // referência ao áudio atual
+
+  constructor(private chatService: ChatService, private cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void {
     const token = localStorage.getItem('auth_token');
@@ -88,7 +83,7 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
         console.error('Erro ao buscar histórico:', erro);
         this.estaCarregandoHistorico = false;
         this.cdr.markForCheck();
-      }
+      },
     });
   }
 
@@ -113,6 +108,48 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
     const el = this.messageListWrapper?.nativeElement;
     if (el && this.scrollListener) {
       el.removeEventListener('scroll', this.scrollListener);
+    }
+  }
+
+  public falar(text: string) {
+    if (!text || !('speechSynthesis' in window)) return;
+
+    // Se já está falando, pausamos/resumimos
+    if (this.isSpeaking && this.currentUtterance) {
+      window.speechSynthesis.cancel(); // ou pause/resume se quiser
+      this.isSpeaking = false;
+      this.currentUtterance = undefined;
+      return;
+    }
+
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'en-US';
+    utterance.rate = 1.0;
+    utterance.pitch = 1.0;
+
+    const setVoice = () => {
+      const voices = window.speechSynthesis.getVoices();
+      const voice =
+        voices.find((v) => v.name.includes('Google US English')) ||
+        voices.find((v) => v.lang.startsWith('en'));
+      if (voice) utterance.voice = voice;
+
+      // Atualiza o estado
+      this.isSpeaking = true;
+      this.currentUtterance = utterance;
+
+      utterance.onend = () => {
+        this.isSpeaking = false;
+        this.currentUtterance = undefined;
+      };
+
+      window.speechSynthesis.speak(utterance);
+    };
+
+    if (window.speechSynthesis.getVoices().length === 0) {
+      window.speechSynthesis.onvoiceschanged = setVoice;
+    } else {
+      setVoice();
     }
   }
 
@@ -149,7 +186,7 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
         this.cdr.markForCheck();
 
         this.scrollToBottom(false);
-      }
+      },
     });
   }
 
@@ -165,7 +202,9 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
     this.scrollToBottom(true);
   }
 
-  trackByIndex(i: number) { return i; }
+  trackByIndex(i: number) {
+    return i;
+  }
 
   private scrollToBottom(force = false): void {
     const el = this.messageListWrapper?.nativeElement;

@@ -72,8 +72,7 @@
   overflow-y: auto;
   padding: 1rem 0.75rem;
   background: radial-gradient(1000px 500px at 100% -10%, rgba(99, 102, 241, 0.08), transparent),
-              radial-gradient(800px 400px at -10% 0%, rgba(236, 72, 153, 0.06), transparent),
-              #0b1220;
+    radial-gradient(800px 400px at -10% 0%, rgba(236, 72, 153, 0.06), transparent), #0b1220;
   scroll-behavior: smooth;
   position: relative;
 }
@@ -135,6 +134,19 @@
   justify-content: center;
 }
 
+.play-audio-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 1.2rem;
+  color: #4b5563;
+  margin-left: 0.5rem;
+}
+
+.play-audio-btn:hover {
+  color: #6366f1;
+}
+
 .message-form {
   display: flex;
   width: 100%;
@@ -178,9 +190,15 @@ textarea[pTextarea]:focus {
   animation: typing 1.4s infinite ease-in-out both;
 }
 
-.typing-indicator p span:nth-child(1) { animation-delay: 0.2s; }
-.typing-indicator p span:nth-child(2) { animation-delay: 0.4s; }
-.typing-indicator p span:nth-child(3) { animation-delay: 0.6s; }
+.typing-indicator p span:nth-child(1) {
+  animation-delay: 0.2s;
+}
+.typing-indicator p span:nth-child(2) {
+  animation-delay: 0.4s;
+}
+.typing-indicator p span:nth-child(3) {
+  animation-delay: 0.6s;
+}
 
 /* Botão flutuante para descer até o fim */
 .scroll-bottom-btn.p-button {
@@ -195,19 +213,39 @@ textarea[pTextarea]:focus {
 
 /* Animações */
 @keyframes typing {
-  0%, 80%, 100% { transform: scale(0); }
-  40% { transform: scale(1.0); }
+  0%,
+  80%,
+  100% {
+    transform: scale(0);
+  }
+  40% {
+    transform: scale(1);
+  }
 }
 
 @keyframes fadeUp {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* Mobile */
 @media (max-width: 600px) {
-  .chat-header h1 { font-size: 1.1rem; }
-  .chat-header p { font-size: 0.85rem; }
-  .message-list-wrapper { padding: 1rem 0.5rem; }
-  .message-form-container { padding: 0.75rem 0.75rem; }
+  .chat-header h1 {
+    font-size: 1.1rem;
+  }
+  .chat-header p {
+    font-size: 0.85rem;
+  }
+  .message-list-wrapper {
+    padding: 1rem 0.5rem;
+  }
+  .message-form-container {
+    padding: 0.75rem 0.75rem;
+  }
 }
