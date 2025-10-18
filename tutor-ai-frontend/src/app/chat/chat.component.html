@@ -6,7 +6,6 @@
 
   <div class="message-list-wrapper" #messageListWrapper>
     <div class="message-list">
-      <!-- Carregando histórico (quando não há cache) -->
       <ng-container *ngIf="estaCarregandoHistorico && mensagens.length === 0">
         <div class="message-loading">
           <p-skeleton width="60%" height="2rem" styleClass="mb-2"></p-skeleton>
@@ -15,15 +14,13 @@
         </div>
       </ng-container>
 
-      <!-- Mensagens -->
       <div
         *ngFor="let msg of mensagens; trackBy: trackByIndex"
         class="message-bubble"
         [ngClass]="{ 'user-message': msg.autor === 'user', 'ia-message': msg.autor === 'ia' }"
       >
-        <p>{{ msg.texto }}</p>
+        <p [innerHTML]="renderMarkdown(msg.texto)"></p>
 
-        <!-- Botão de áudio apenas para mensagens da IA -->
         <button
           *ngIf="msg.autor === 'ia'"
           pButton
@@ -36,13 +33,11 @@
         </button>
       </div>
 
-      <!-- Indicador de "IA digitando" -->
       <div *ngIf="estaCarregandoResposta" class="message-bubble ia-message typing-indicator">
         <p><span></span><span></span><span></span></p>
       </div>
     </div>
 
-    <!-- Botão flutuante para descer até o final -->
     <button
       *ngIf="userAwayFromBottom"
       type="button"

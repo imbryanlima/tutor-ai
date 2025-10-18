@@ -18,6 +18,9 @@ import { TextareaModule } from 'primeng/textarea';
 import { SkeletonModule } from 'primeng/skeleton';
 import { RippleModule } from 'primeng/ripple';
 
+import { marked } from 'marked';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+
 type Autor = 'user' | 'ia';
 export interface Mensagem {
   autor: Autor;
@@ -40,21 +43,23 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
   estaCarregandoHistorico = false;
   estaCarregandoResposta = false;
 
-  // Público para *ngIf no template
   userAwayFromBottom = false;
 
   private scrollListener?: (ev: Event) => void;
 
-  public isSpeaking: boolean = false; // se está falando atualmente
-  public currentUtterance?: SpeechSynthesisUtterance; // referência ao áudio atual
+  public isSpeaking: boolean = false;
+  public currentUtterance?: SpeechSynthesisUtterance;
 
-  constructor(private chatService: ChatService, private cdr: ChangeDetectorRef) {}
+  constructor(
+    private chatService: ChatService,
+    private cdr: ChangeDetectorRef,
+    private sanitizer: DomSanitizer
+  ) {}
 
   ngOnInit(): void {
     const token = localStorage.getItem('auth_token');
     if (!token) return;
 
-    // 1) Cache local (se houver)
     const cache = localStorage.getItem('chat.history');
     if (cache) {
       try {
@@ -64,11 +69,9 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     }
 
-    // 2) Estado de carregamento do histórico só se não houver cache
     this.estaCarregandoHistorico = this.mensagens.length === 0;
     this.cdr.markForCheck();
 
-    // 3) Buscar histórico do backend
     this.chatService.getHistorico(token).subscribe({
       next: (historico: any[]) => {
         this.mensagens = this.normalizeHistorico(historico);
@@ -76,7 +79,6 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
         this.estaCarregandoHistorico = false;
         this.cdr.markForCheck();
 
-        // rola ao final após renderizar
         setTimeout(() => this.scrollToBottom(true), 0);
       },
       error: (erro) => {
@@ -100,7 +102,6 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
 
     el.addEventListener('scroll', this.scrollListener, { passive: true });
 
-    // Se já havia mensagens (cache), garanta posicionamento inicial
     setTimeout(() => this.scrollToBottom(true), 0);
   }
 
@@ -111,12 +112,23 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
+  public renderMarkdown(text: string): SafeHtml {
+    if (!text) return '';
+
+    const result = marked.parse(text);
+
+    const html = typeof result === 'string' ? result : '';
+
+    return this.sanitizer.bypassSecurityTrustHtml(html);
+  }
+
   public falar(text: string) {
     if (!text || !('speechSynthesis' in window)) return;
 
-    // Se já está falando, pausamos/resumimos
+    text = text.replace(/[*_`#>]/g, '');
+
     if (this.isSpeaking && this.currentUtterance) {
-      window.speechSynthesis.cancel(); // ou pause/resume se quiser
+      window.speechSynthesis.cancel();
       this.isSpeaking = false;
       this.currentUtterance = undefined;
       return;
@@ -147,7 +159,11 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
     };
 
     if (window.speechSynthesis.getVoices().length === 0) {
-      window.speechSynthesis.onvoiceschanged = setVoice;
+      const handleVoices = () => {
+        setVoice();
+        window.speechSynthesis.onvoiceschanged = null;
+      };
+      window.speechSynthesis.onvoiceschanged = handleVoices;
     } else {
       setVoice();
     }
@@ -157,14 +173,12 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
     const texto = this.novaMensagem?.trim();
     if (!texto) return;
 
-    // adiciona mensagem do usuário
     this.mensagens.push({ autor: 'user', texto });
     this.persistCache();
     this.novaMensagem = '';
     this.estaCarregandoResposta = true;
     this.cdr.markForCheck();
 
-    // rola ao final (forçado porque foi o usuário que enviou)
     this.scrollToBottom(true);
 
     // chama backend
@@ -175,7 +189,6 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
         this.persistCache();
         this.cdr.markForCheck();
 
-        // rola ao final somente se usuário estiver próximo do fim
         this.scrollToBottom(false);
       },
       error: (erro) => {
@@ -221,14 +234,13 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
     } catch {}
   }
 
-  /** Normaliza qualquer formato do backend para {autor:'user'|'ia', texto:string} */
   private normalizeHistorico(historico: any[]): Mensagem[] {
     if (!Array.isArray(historico)) return [];
 
     return historico.map((mensagem: string): Mensagem => {
       if (typeof mensagem !== 'string') return { autor: 'ia', texto: '' };
 
-      let autor: Autor = 'ia'; // padrão
+      let autor: Autor = 'ia';
       let texto = mensagem;
 
       if (mensagem.toLowerCase().startsWith('usuário:')) {
