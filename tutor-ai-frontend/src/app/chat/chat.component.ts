@@ -125,7 +125,12 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
   public falar(text: string) {
     if (!text || !('speechSynthesis' in window)) return;
 
-    text = text.replace(/[*_`#>]/g, '');
+    text = text
+      .replace(
+        /([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|\uD83E[\uDD00-\uDDFF])/g,
+        ''
+      )
+      .replace(/[*_`#>]/g, '');
 
     if (this.isSpeaking && this.currentUtterance) {
       window.speechSynthesis.cancel();
