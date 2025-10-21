@@ -30,7 +30,8 @@ public class AIController {
     private final UserProfileRepository userProfileRepository;
     private final UserRepository userRepository;
 
-    public AIController(AIService aiService, UserProfileRepository userProfileRepository, UserRepository userRepository) {
+    public AIController(AIService aiService, UserProfileRepository userProfileRepository,
+            UserRepository userRepository) {
         this.aiService = aiService;
         this.userProfileRepository = userProfileRepository;
         this.userRepository = userRepository;
@@ -38,8 +39,8 @@ public class AIController {
 
     @PostMapping("/message")
     public ResponseEntity<String> handleMessage(@RequestBody ChatMessageRequest request,
-                                                Authentication authentication,
-                                                HttpSession session) {
+            Authentication authentication,
+            HttpSession session) {
         try {
             String userEmail = authentication.getName();
             User currentUser = userRepository.findByEmail(userEmail)
@@ -48,12 +49,13 @@ public class AIController {
                     .orElseThrow(() -> new RuntimeException("User Profile not found for user: " + userEmail));
             String userLevel = userProfile.getEnglishLevel();
 
-            if (userLevel == null || userLevel.isBlank()){
+            if (userLevel == null || userLevel.isBlank()) {
                 return ResponseEntity.badRequest().body("Por favor, defina seu nível de inglês no perfil.");
             }
 
             List<String> history = (List<String>) session.getAttribute("chatHistory");
-            if (history == null) history = new ArrayList<>();
+            if (history == null)
+                history = new ArrayList<>();
 
             history.add("Usuário: " + request.getMessage());
 
