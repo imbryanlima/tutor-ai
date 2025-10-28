@@ -38,12 +38,14 @@ A plataforma ajusta o **nível de dificuldade** conforme o desempenho do usuári
 ✅ **Feedback Instantâneo** — receba correções e dicas durante a conversa  
 ✅ **Histórico de Aprendizado** — acompanhe sua evolução  
 ✅ **Interface Intuitiva** — design limpo e responsivo para facilitar o uso  
+✅ **Recurso de voz (TTS)** — o usuário pode ouvir e falar com a IA  
+> ⚠️ *A funcionalidade de voz funciona plenamente apenas em alguns navegadores (como Google Chrome e Microsoft Edge), devido à compatibilidade da Web Speech API.*
 
 ---
 
-## 🧩 Roadmap (Em Desenvolvimento)
+## 👨‍💻 Autor
 
-- 📈 Dashboard de desempenho com estatísticas e metas  
-- 🎤 Reconhecimento de voz para prática de pronúncia  
-- 🧠 Expansão para outros idiomas  
-- 🕹️ Desafios interativos e quizzes personalizados  
+Desenvolvido por **Bryan Lima**, **Lucas Gabriel**, **Magdiel Santos** 
+🌐 [LinkedIn - Bryan](https://www.linkedin.com/in/imbryanlima)
+🌐 [LinkedIn - Lucas](https://www.linkedin.com/in/devlucasg)
+🌐 [LinkedIn - Magdiel](https://www.linkedin.com/in/magdiel-santos-813884251)
