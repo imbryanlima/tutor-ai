@@ -15,7 +15,7 @@ Pré-requisitos
 
 Node.js 18+
 Java 17+
-Maven 3.6+
+Maven 3.5.7+
 
 Passo a passo:
 
