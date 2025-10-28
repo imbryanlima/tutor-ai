@@ -7,7 +7,6 @@ import { HttpClientModule } from '@angular/common/http';
 
 @Component({
   selector: 'app-register',
-  // CORREÇÃO: Padrão Standalone e imports de módulos essenciais
   standalone: true,
   imports: [CommonModule, FormsModule, RouterModule, HttpClientModule],
   templateUrl: './register.component.html',

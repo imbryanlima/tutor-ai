@@ -37,21 +37,17 @@ export class LoginComponent {
   }
 
   private checkUserProfile(): void {
-    // Buscar o perfil do usuário
     this.http.get('/api/profile/get').subscribe({
       next: (profileResponse: any) => {
         if (profileResponse.success && profileResponse.profile) {
-          // Já tem perfil - vai direto para o chat
           localStorage.setItem('userProfile', JSON.stringify(profileResponse.profile));
           this.router.navigate(['/chat']);
         } else {
-          // Não tem perfil - vai para configuração
           this.router.navigate(['/profile-setup']);
         }
       },
       error: (error) => {
         console.error('Erro ao verificar perfil:', error);
-        // Em caso de erro, vai para configuração de perfil
         this.router.navigate(['/profile-setup']);
       },
     });

@@ -10,14 +10,12 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { ChatService } from '../services/chat.service';
-
-// PrimeNG v20
 import { ButtonModule } from 'primeng/button';
 import { TextareaModule } from 'primeng/textarea';
 import { SkeletonModule } from 'primeng/skeleton';
 import { RippleModule } from 'primeng/ripple';
-
 import { marked } from 'marked';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
@@ -42,21 +40,23 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
   novaMensagem = '';
   estaCarregandoHistorico = false;
   estaCarregandoResposta = false;
-
   userAwayFromBottom = false;
-
   private scrollListener?: (ev: Event) => void;
-
   public isSpeaking: boolean = false;
   public currentUtterance?: SpeechSynthesisUtterance;
 
   constructor(
     private chatService: ChatService,
     private cdr: ChangeDetectorRef,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
+    if (!this.validateAccess()) {
+      return;
+    }
+
     const token = localStorage.getItem('auth_token');
     if (!token) return;
 
@@ -78,7 +78,6 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
         this.persistCache();
         this.estaCarregandoHistorico = false;
         this.cdr.markForCheck();
-
         setTimeout(() => this.scrollToBottom(true), 0);
       },
       error: (erro) => {
@@ -89,19 +88,133 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
+  private validateAccess(): boolean {
+    const token = localStorage.getItem('auth_token');
+    const userProfile = localStorage.getItem('userProfile');
+
+    if (!token) {
+      this.router.navigate(['/login']);
+      return false;
+    }
+
+    if (!userProfile) {
+      this.router.navigate(['/profile-setup']);
+      return false;
+    }
+
+    return true;
+  }
+
+  private normalizeHistorico(historico: any[]): Mensagem[] {
+    if (!Array.isArray(historico)) {
+      return [];
+    }
+
+    if (historico.length === 0) {
+      return [];
+    }
+
+    const mensagensNormalizadas: Mensagem[] = [];
+
+    for (const item of historico) {
+      try {
+        if (item && typeof item === 'object' && item.autor && item.texto) {
+          mensagensNormalizadas.push({
+            autor: item.autor === 'user' ? 'user' : 'ia',
+            texto: String(item.texto),
+          });
+          continue;
+        }
+
+        if (item && typeof item === 'object') {
+          const autor = this.extractAutor(item);
+          const texto = this.extractTexto(item);
+
+          if (texto) {
+            mensagensNormalizadas.push({ autor, texto });
+          }
+          continue;
+        }
+
+        if (typeof item === 'string') {
+          const mensagemString = this.parseStringMessage(item);
+          if (mensagemString) {
+            mensagensNormalizadas.push(mensagemString);
+          }
+          continue;
+        }
+
+        if (item != null) {
+          mensagensNormalizadas.push({
+            autor: 'ia',
+            texto: String(item),
+          });
+        }
+      } catch (error) {
+        console.warn('Erro ao normalizar item do histórico:', item, error);
+      }
+    }
+
+    return mensagensNormalizadas;
+  }
+
+  private extractAutor(item: any): Autor {
+    const autorValue = item.autor || item.sender || item.role || item.type || 'ia';
+
+    if (autorValue === 'user' || autorValue === 'usuário' || autorValue === 'usuario') {
+      return 'user';
+    }
+
+    return 'ia';
+  }
+
+  private extractTexto(item: any): string {
+    return String(
+      item.texto || item.content || item.message || item.text || item.body || ''
+    ).trim();
+  }
+
+  private parseStringMessage(text: string): Mensagem | null {
+    if (!text || typeof text !== 'string') return null;
+
+    const textLower = text.toLowerCase().trim();
+
+    if (textLower.startsWith('usuário:') || textLower.startsWith('usuario:')) {
+      return {
+        autor: 'user',
+        texto: text.substring(text.indexOf(':') + 1).trim(),
+      };
+    }
+
+    if (
+      textLower.startsWith('ia:') ||
+      textLower.startsWith('assistente:') ||
+      textLower.startsWith('bot:')
+    ) {
+      return {
+        autor: 'ia',
+        texto: text.substring(text.indexOf(':') + 1).trim(),
+      };
+    }
+
+    return {
+      autor: 'ia',
+      texto: text.trim(),
+    };
+  }
+
   ngAfterViewInit(): void {
     const el = this.messageListWrapper?.nativeElement;
     if (!el) return;
 
     this.scrollListener = () => {
-      const threshold = 80; // px
+      const threshold = 80;
       const atBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - threshold;
       this.userAwayFromBottom = !atBottom;
       this.cdr.markForCheck();
     };
 
     el.addEventListener('scroll', this.scrollListener, { passive: true });
-
     setTimeout(() => this.scrollToBottom(true), 0);
   }
 
@@ -116,9 +229,7 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
     if (!text) return '';
 
     const result = marked.parse(text);
-
     const html = typeof result === 'string' ? result : '';
-
     return this.sanitizer.bypassSecurityTrustHtml(html);
   }
 
@@ -151,7 +262,6 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
         voices.find((v) => v.lang.startsWith('en'));
       if (voice) utterance.voice = voice;
 
-      // Atualiza o estado
       this.isSpeaking = true;
       this.currentUtterance = utterance;
 
@@ -183,17 +293,14 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
     this.novaMensagem = '';
     this.estaCarregandoResposta = true;
     this.cdr.markForCheck();
-
     this.scrollToBottom(true);
 
-    // chama backend
     this.chatService.sendMessage(texto).subscribe({
       next: (respostaDaIA: string) => {
         this.mensagens.push({ autor: 'ia', texto: respostaDaIA });
         this.estaCarregandoResposta = false;
         this.persistCache();
         this.cdr.markForCheck();
-
         this.scrollToBottom(false);
       },
       error: (erro) => {
@@ -202,7 +309,6 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
         this.estaCarregandoResposta = false;
         this.persistCache();
         this.cdr.markForCheck();
-
         this.scrollToBottom(false);
       },
     });
@@ -237,26 +343,5 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
     try {
       localStorage.setItem('chat.history', JSON.stringify(this.mensagens));
     } catch {}
-  }
-
-  private normalizeHistorico(historico: any[]): Mensagem[] {
-    if (!Array.isArray(historico)) return [];
-
-    return historico.map((mensagem: string): Mensagem => {
-      if (typeof mensagem !== 'string') return { autor: 'ia', texto: '' };
-
-      let autor: Autor = 'ia';
-      let texto = mensagem;
-
-      if (mensagem.toLowerCase().startsWith('usuário:')) {
-        autor = 'user';
-        texto = mensagem.substring(8).trim();
-      } else if (mensagem.toLowerCase().startsWith('ia:')) {
-        autor = 'ia';
-        texto = mensagem.substring(3).trim();
-      }
-
-      return { autor, texto };
-    });
   }
 }

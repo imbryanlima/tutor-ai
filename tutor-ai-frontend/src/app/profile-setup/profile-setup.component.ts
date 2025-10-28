@@ -11,7 +11,7 @@ import { AuthService } from '../services/auth.service';
 interface ProfileData {
   englishLevel: string;
   learningGoal: string;
-  musicGenres?: string[]; // agora é compatível com a nova resposta
+  musicGenres?: string[];
 }
 
 interface ApiResponse {
@@ -62,6 +62,8 @@ export class ProfileSetupComponent implements OnInit, OnDestroy {
             this.englishLevel = response.profile.englishLevel || '';
             this.learningGoal = response.profile.learningGoal || '';
             this.musicGenres = response.profile.musicGenres || [];
+
+            localStorage.setItem('userProfile', JSON.stringify(response.profile));
           } else {
             this.showMessage(response.message || 'Perfil não encontrado.', false);
           }
@@ -86,7 +88,10 @@ export class ProfileSetupComponent implements OnInit, OnDestroy {
     }
 
     if (this.learningGoal.trim().length < 10) {
-      this.showMessage('Por favor, forneça uma descrição mais detalhada do seu objetivo (mínimo 10 caracteres).', false);
+      this.showMessage(
+        'Por favor, forneça uma descrição mais detalhada do seu objetivo (mínimo 10 caracteres).',
+        false
+      );
       return false;
     }
 
@@ -123,6 +128,12 @@ export class ProfileSetupComponent implements OnInit, OnDestroy {
             response.message || 'Perfil atualizado com sucesso! Você está pronto para conversar!',
             true
           );
+
+          if (response.profile) {
+            localStorage.setItem('userProfile', JSON.stringify(response.profile));
+          } else {
+            localStorage.setItem('userProfile', JSON.stringify(profileData));
+          }
 
           setTimeout(() => {
             this.router.navigate(['/chat']);
