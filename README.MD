@@ -1,30 +1,49 @@
-Tutor AI
-📚 Sobre o Projeto
-Tutor AI é uma aplicação web que ajuda no aprendizado de inglês através de conversas inteligentes com IA. O sistema adapta o nível de dificuldade conforme o perfil do usuário e oferece feedback em tempo real.
+# 🧠 Tutor AI
 
-🚀 Tecnologias Utilizadas
+> Aprenda inglês de forma inteligente, personalizada e interativa com o poder da Inteligência Artificial.
 
-Frontend: Angular
-Backend: Java Spring Boot
-Autenticação: JWT
-IA: Google Gemini API
+---
 
-⚡ Como Executar o Projeto
+## 📚 Sobre o Projeto
 
-Pré-requisitos
+O **Tutor AI** é uma aplicação web desenvolvida para **auxiliar no aprendizado de inglês** por meio de **conversas naturais com uma IA**.  
+A plataforma ajusta o **nível de dificuldade** conforme o desempenho do usuário e oferece **feedback em tempo real**, proporcionando uma experiência de aprendizado fluida, envolvente e adaptativa.
 
-Node.js 18+
-Java 17+
-Maven 3.5.7+
+---
 
-Passo a passo:
+## 🚀 Tecnologias Utilizadas
 
-1. Baixe o projeto do GitHub
-2. Abra o terminal na pasta tutor-ai-backend (cd tutor-ai-fbackend)
-3. Digite: .\mvnw.cmd spring-boot:run (Windows) ou ./mvnw spring-boot:run (Mac/Linux)
-4. Abra outro terminal na pasta tutor-ai-frontend (cd tutor-ai-frontend)
-5. Digite: npm install e depois ng serve
-6. Acesse: http://localhost:4200 no seu navegador
+| Camada | Tecnologia |
+|:-------|:------------|
+| **Frontend** | [Angular](https://angular.io/) |
+| **Backend** | [Spring Boot (Java)](https://spring.io/projects/spring-boot) |
+| **Autenticação** | JWT (JSON Web Token) |
+| **IA** | [Google Gemini API](https://ai.google.dev/) |
 
-🎉 Pronto! Agora é só criar sua conta e começar a aprender!
+---
 
+## 🎯 Objetivos
+
+- Oferecer um ambiente digital para **praticar inglês com IA**  
+- **Adaptar o aprendizado** de acordo com o perfil de cada usuário  
+- Garantir **feedbacks instantâneos** que aceleram a evolução  
+- Promover uma **experiência imersiva e interativa** no aprendizado  
+
+---
+
+## 💡 Principais Recursos
+
+✅ **Conversas com IA** — pratique inglês em tempo real  
+✅ **Adaptação de Nível** — o sistema ajusta o conteúdo conforme seu progresso  
+✅ **Feedback Instantâneo** — receba correções e dicas durante a conversa  
+✅ **Histórico de Aprendizado** — acompanhe sua evolução  
+✅ **Interface Intuitiva** — design limpo e responsivo para facilitar o uso  
+
+---
+
+## 🧩 Roadmap (Em Desenvolvimento)
+
+- 📈 Dashboard de desempenho com estatísticas e metas  
+- 🎤 Reconhecimento de voz para prática de pronúncia  
+- 🧠 Expansão para outros idiomas  
+- 🕹️ Desafios interativos e quizzes personalizados  
