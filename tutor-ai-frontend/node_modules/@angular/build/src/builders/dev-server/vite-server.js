@@ -667,7 +667,6 @@ async function setupServer(serverOptions, outputFiles, assets, preserveSymlinks,
             }),
         },
         plugins: [
-            (0, plugins_1.createAngularLocaleDataPlugin)(),
             (0, plugins_1.createAngularSetupMiddlewaresPlugin)({
                 outputFiles,
                 assets,

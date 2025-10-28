@@ -1,6 +1,5 @@
 @import 'primeicons/primeicons.css';
 
-/* Aplica visual escuro global */
 html,
 body {
   height: 100%;
@@ -12,20 +11,17 @@ body {
   color: #e5edff;
 }
 
-/* Container padrão */
 .container {
   padding-top: 50px;
   padding-bottom: 50px;
 }
 
-/* Cartões */
 .card {
   border: none;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-/* Headers */
 h2 {
   font-weight: 700;
 }
@@ -36,7 +32,6 @@ h2 {
   padding: 20px;
 }
 
-/* Inputs e botões */
 .form-control {
   border-radius: 8px;
   border: 1px solid #ced4da;

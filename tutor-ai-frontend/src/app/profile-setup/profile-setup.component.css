@@ -1,6 +1,3 @@
-/* =====================================
-   Container principal
-===================================== */
 .container {
   font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
   min-height: 100vh;
@@ -14,7 +11,6 @@
   background: transparent;
 }
 
-/* Efeitos de fundo animados */
 .container::before {
   content: '';
   position: fixed;
@@ -35,9 +31,6 @@
   }
 }
 
-/* =====================================
-   Card principal (efeito vidro)
-===================================== */
 .card {
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 22px;
@@ -60,7 +53,6 @@
   box-shadow: 0 6px 50px rgba(99, 102, 241, 0.25);
 }
 
-/* Luz interna */
 .card::before {
   content: '';
   position: absolute;
@@ -70,9 +62,6 @@
   border-radius: 22px;
 }
 
-/* =====================================
-   Cabeçalho do card
-===================================== */
 .card-header {
   background: linear-gradient(135deg, #6366f1, #8b5cf6) !important;
   padding: 2.5rem 2rem !important;
@@ -112,17 +101,11 @@
   line-height: 1.5;
 }
 
-/* =====================================
-   Corpo do card
-===================================== */
 .card-body {
   padding: 3rem 2.5rem !important;
   background: transparent;
 }
 
-/* =====================================
-   Formulário e inputs
-===================================== */
 .form-group {
   margin-bottom: 2.5rem;
 }
@@ -165,9 +148,6 @@
   text-indent: 0;
 }
 
-/* =====================================
-   Select/Dropdown estilizado
-===================================== */
 select.form-control {
   appearance: none;
   -webkit-appearance: none;
@@ -180,7 +160,6 @@ select.form-control {
   cursor: pointer;
 }
 
-/* Options do dropdown - CORRIGIDO */
 select.form-control option {
   background: #1e293b !important;
   color: #f1f5f9 !important;
@@ -205,18 +184,12 @@ select.form-control option:focus {
   color: white !important;
 }
 
-/* =====================================
-   Textarea
-===================================== */
 textarea.form-control {
   resize: vertical;
   min-height: 120px;
   line-height: 1.5;
 }
 
-/* =====================================
-   Botões
-===================================== */
 .btn-info {
   background: linear-gradient(90deg, #6366f1, #8b5cf6) !important;
   border: none !important;
@@ -259,7 +232,6 @@ textarea.form-control {
   transform: none !important;
 }
 
-/* Botão Sair */
 .btn-link {
   color: #94a3b8 !important;
   text-decoration: none;
@@ -282,9 +254,6 @@ textarea.form-control {
   border-radius: 8px;
 }
 
-/* =====================================
-   Alertas
-===================================== */
 .alert {
   border-radius: 12px;
   padding: 1.25rem 1.5rem;
@@ -333,17 +302,11 @@ textarea.form-control {
   }
 }
 
-/* =====================================
-   Estados de loading e desabilitado
-===================================== */
 .btn-info:disabled {
   background: linear-gradient(90deg, #4b5563, #6b7280) !important;
   box-shadow: none !important;
 }
 
-/* =====================================
-   Animações
-===================================== */
 @keyframes fadeUp {
   from {
     opacity: 0;
@@ -355,9 +318,6 @@ textarea.form-control {
   }
 }
 
-/* =====================================
-   Responsividade
-===================================== */
 @media (max-width: 768px) {
   .container {
     padding: 16px;
@@ -432,9 +392,6 @@ textarea.form-control {
   }
 }
 
-/* =====================================
-   Remove estilos padrão do Bootstrap
-===================================== */
 .shadow-lg {
   box-shadow: none !important;
 }
@@ -483,9 +440,6 @@ textarea.form-control {
   padding: 0 !important;
 }
 
-/* =====================================
-   Melhorias de acessibilidade
-===================================== */
 .form-control:focus {
   outline: 2px solid #818cf8;
   outline-offset: 2px;

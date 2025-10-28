@@ -1,6 +1,3 @@
-/* =====================================
-   Container principal
-===================================== */
 .auth-container {
   font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
   height: 100vh;
@@ -13,7 +10,6 @@
   box-sizing: border-box;
 }
 
-/* Efeitos de fundo animados */
 .auth-container::before {
   content: '';
   position: absolute;
@@ -34,9 +30,6 @@
   }
 }
 
-/* =====================================
-   Card de registro (efeito vidro)
-===================================== */
 .card {
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 22px;
@@ -59,7 +52,6 @@
   box-shadow: 0 6px 50px rgba(99, 102, 241, 0.25);
 }
 
-/* Luz interna */
 .card::before {
   content: '';
   position: absolute;
@@ -69,9 +61,6 @@
   border-radius: 22px;
 }
 
-/* =====================================
-   Cabeçalho - SOLUÇÃO NUCLEAR
-===================================== */
 .auth-header {
   background: linear-gradient(135deg, #6366f1, #8b5cf6) !important;
   padding: 2.5rem 1.5rem !important;
@@ -103,18 +92,12 @@
   z-index: 1;
 }
 
-/* =====================================
-   Corpo do card
-===================================== */
 .card-body {
   padding: 2.5rem 2rem !important;
   background: transparent;
   margin: 0;
 }
 
-/* =====================================
-   Formulário e inputs
-===================================== */
 .form-group {
   margin-bottom: 1.5rem;
 }
@@ -131,7 +114,7 @@
 .form-control {
   border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 12px;
-  padding: 1rem 1.25rem !important; /* Tamanho padronizado */
+  padding: 1rem 1.25rem !important;
   font-size: 1rem;
   background: rgba(255, 255, 255, 0.06);
   color: #f8fafc;
@@ -141,7 +124,7 @@
   text-align: left;
   width: 100%;
   box-sizing: border-box;
-  height: 52px; /* Altura consistente */
+  height: 52px; 
 }
 
 .form-control:focus {
@@ -158,9 +141,6 @@
   text-indent: 0;
 }
 
-/* =====================================
-   Botão Cadastrar - MESMO TAMANHO E ESTILO
-===================================== */
 .btn-success {
   background: linear-gradient(90deg, #6366f1, #8b5cf6) !important;
   border: none !important;
@@ -176,7 +156,7 @@
   overflow: hidden;
   width: 100%;
   margin-top: 0.5rem;
-  height: 56px; /* Altura consistente com login */
+  height: 56px; 
   display: flex;
   align-items: center;
   justify-content: center;
@@ -200,18 +180,14 @@
   box-shadow: 0 0 35px rgba(99, 102, 241, 0.4) !important;
 }
 
-/* ESTADO DESABILITADO COM OPACIDADE AO INVÉS DE CINZA */
 .btn-success:disabled {
-  opacity: 0.4 !important; /* Opacidade reduzida */
+  opacity: 0.4 !important;
   cursor: not-allowed;
   transform: none !important;
-  background: linear-gradient(90deg, #6366f1, #8b5cf6) !important; /* Mantém a mesma cor */
-  box-shadow: 0 0 15px rgba(99, 102, 241, 0.15) !important; /* Sombra mais suave */
+  background: linear-gradient(90deg, #6366f1, #8b5cf6) !important; 
+  box-shadow: 0 0 15px rgba(99, 102, 241, 0.15) !important;
 }
 
-/* =====================================
-   Mensagens de erro
-===================================== */
 .alert-danger {
   background: rgba(239, 68, 68, 0.15);
   border: 1px solid rgba(239, 68, 68, 0.35);
@@ -238,9 +214,6 @@
   }
 }
 
-/* =====================================
-   Links e texto inferior
-===================================== */
 .text-center {
   margin-top: 1.5rem;
   color: whitesmoke;
@@ -280,9 +253,6 @@
   width: 100%;
 }
 
-/* =====================================
-   Estados de validação com opacidade
-===================================== */
 .ng-invalid.ng-touched {
   border-color: rgba(239, 68, 68, 0.6) !important;
   background: rgba(239, 68, 68, 0.05) !important;
@@ -293,9 +263,6 @@
   background: rgba(34, 197, 94, 0.05) !important;
 }
 
-/* =====================================
-   Animações de entrada
-===================================== */
 @keyframes fadeUp {
   from {
     opacity: 0;
@@ -307,9 +274,6 @@
   }
 }
 
-/* =====================================
-   Responsividade
-===================================== */
 @media (max-width: 768px) {
   .auth-container {
     padding: 0 16px;
@@ -389,9 +353,6 @@
   }
 }
 
-/* =====================================
-   Remove estilos padrão do Bootstrap
-===================================== */
 .shadow-lg {
   box-shadow: none !important;
 }
