@@ -43,7 +43,7 @@ A plataforma ajusta o **nível de dificuldade** conforme o desempenho do usuári
 
 ---
 
-## 👨‍💻 Autor
+## 👨‍💻 Autores
 
 Desenvolvido por **Bryan Lima**, **Lucas Gabriel**, **Magdiel Santos**
 
