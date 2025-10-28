@@ -1,15 +1,14 @@
 import { Component } from '@angular/core';
 import { AuthService } from '../services/auth.service';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { HttpClientModule, HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
-
+  imports: [CommonModule, FormsModule, RouterModule, HttpClientModule],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css'],
 })
@@ -18,7 +17,7 @@ export class LoginComponent {
   password = '';
   errorMessage: string | null = null;
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(private authService: AuthService, private router: Router, private http: HttpClient) {}
 
   onLogin(): void {
     this.errorMessage = null;
@@ -27,11 +26,33 @@ export class LoginComponent {
       next: (response) => {
         console.log('Login bem-sucedido. Token recebido:', response.accessToken);
 
-        this.router.navigate(['/profile-setup']);
+        // VERIFICAR SE JÁ TEM PERFIL CONFIGURADO
+        this.checkUserProfile();
       },
       error: (err) => {
         this.errorMessage = err.error.message || 'Erro ao fazer login. Verifique suas credenciais.';
         console.error('Erro de Login:', err);
+      },
+    });
+  }
+
+  private checkUserProfile(): void {
+    // Buscar o perfil do usuário
+    this.http.get('/api/profile/get').subscribe({
+      next: (profileResponse: any) => {
+        if (profileResponse.success && profileResponse.profile) {
+          // Já tem perfil - vai direto para o chat
+          localStorage.setItem('userProfile', JSON.stringify(profileResponse.profile));
+          this.router.navigate(['/chat']);
+        } else {
+          // Não tem perfil - vai para configuração
+          this.router.navigate(['/profile-setup']);
+        }
+      },
+      error: (error) => {
+        console.error('Erro ao verificar perfil:', error);
+        // Em caso de erro, vai para configuração de perfil
+        this.router.navigate(['/profile-setup']);
       },
     });
   }
